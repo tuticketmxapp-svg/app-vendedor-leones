@@ -1,0 +1,7 @@
+{
+  "name": "app-vendedor-leones",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
