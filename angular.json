@@ -31,7 +31,12 @@
                 "output": "./svg"
               }
             ],
-            "styles": ["src/global.scss", "src/theme/variables.scss"],
+            "styles": [
+            "src/styles.scss",
+            "src/global.scss", 
+            "src/theme/variables.scss",
+            "node_modules/@fortawesome/fontawesome-free/css/all.min.css"
+          ],
             "scripts": []
           },
           "configurations": {
@@ -136,7 +141,8 @@
   "cli": {
     "schematicCollections": [
       "@ionic/angular-toolkit"
-    ]
+    ],
+    "analytics": "910f9afa-a836-4cb9-a97a-4a623f8b4461"
   },
   "schematics": {
     "@ionic/angular-toolkit:component": {

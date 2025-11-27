@@ -1,0 +1,544 @@
+.login {
+    //background-image: url('../../../assets/img/background-login.jpeg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 100%;
+}
+
+ion-header{
+    position: absolute;
+
+    ion-menu-button{
+        background: white;
+        border-radius: 15px;
+        box-shadow: #0000000d 0 2px 5px;
+    }
+}
+
+.cuenta {
+    p {
+        font-family: "Segoe-UI";
+        color: #9CA3AF;
+        font-size: 16px
+    }
+
+    a {
+        font-family: "Segoe-UI";
+        color: #4B57F8;
+        font-size: 16px
+    }
+}
+
+.bienvenido {
+    font-family: "Antonio-SemiBold";
+    color: #fff;
+    font-size: 48px;
+    @media screen  and (max-width: 575.98px) {
+        font-size: 28px;
+    }
+}
+
+.administrar {
+    font-family: "Barlow-Medium";
+    color: #fff;
+    font-size: 18px
+}
+
+.text-label {
+    font-family: "Segoe-UI-SemiBold";
+    color: #8d8d8d;
+    font-size: 16px
+}
+
+.recuerdame {
+    font-family: "Barlow-Medium";
+    color: #fff;
+    font-size: 18px
+}
+
+.olvidaste {
+    font-family: "Barlow-Medium";
+    color:  #19713E;
+    font-size: 16px;
+    white-space: nowrap;
+    font-weight: bold;
+    inline-size: 100%;
+    text-align: end;
+    
+}
+
+ion-button.btn-login {
+    color: white;
+    --background: #E9610B;
+    font-family: "Barlow-Semibold";
+    font-size: 18px;
+    --border-radius: 12px;
+    block-size: 45px;
+    --box-shadow: #0000001f 0 5px 8px;
+    margin: 0;
+}
+
+.line-container {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: #CFCFCF;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.line-container hr {
+    flex: 1;
+    border: none;
+    border-block-start: 2px solid #CFCFCF;
+    opacity: 1;
+}
+
+ion-button.btn-google {
+    color: #8B8B8B;
+    --background: #FFFFFF;
+    font-family: "Segoe-UI-SemiBold";
+    font-size: 15px;
+    --border-radius: 15px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    inline-size: 100%;
+    --box-shadow: #0000000f 0 5px 8px;
+    --border-style: solid;
+    --border-color: #ECECEC;
+    --border-width: 0.6mm;
+    font-weight: bold;
+    margin: 0;
+
+    img {
+        width: 30px;
+    }
+}
+
+.inputs-form {
+    border-radius: 10px !important;
+    block-size: 46px !important;
+    --padding-start: 20px;
+    --padding-end: 20px;
+    --highlight-color: black;
+    overflow: hidden;
+    border: var(--bs-border-width) solid #ECECEC;
+    border-width: 2px;
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    color: #4D4D4D;
+    padding-inline: 0;
+}
+
+.password-container {
+    position: relative;
+}
+
+.toggle-password {
+    cursor: pointer;
+    z-index: 2;
+    color: #8B8B8B;
+    inline-size: 20px;
+}
+
+.btn-crear {
+    color: #FFFFFF;
+    background-color: #33867C;
+    font-family: "Nunito-SemiBold";
+    font-size: 16px;
+}
+
+.bg-default {
+    background-color: #fff;
+    border-radius: 10px;
+}
+
+.event-item:not(:last-child) {
+    border-right: 1px solid #a2a2a2;
+}
+
+.banner {
+    background-color: #2C2E65;
+    width: 100%;
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    img {
+        width: 50%;
+        height: auto;
+    }
+
+}
+.hidden {
+    display: none;
+  }
+  
+  .visible {
+    display: block;
+  }
+
+@media (max-width: 575.98px) {
+    .menu-container {
+        overflow-x: auto;
+        white-space: nowrap;
+        overflow-y: auto;
+        background-color: #2C2E65;
+        top: 60px;
+        position: relative;
+        max-height: calc(100vh - 60px);
+        height: 60px;
+
+        &::-webkit-scrollbar {
+            width: 9px;
+            height: 9px;
+            padding-top: 0px;
+            z-index: 1;
+            display: none;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background-color: #ffffff !important;
+            border-radius: 10px;
+            border: 3px solid #ffffff;
+        }
+    }
+
+    .menu li:not(:last-child) {
+        border-right: 1px solid #fff;
+        height: 36px;
+        position: relative;
+        margin-top: 17px;
+    }
+
+}
+
+@media (min-width: 576px) {
+    .menu-container {
+        overflow-x: auto;
+        white-space: nowrap;
+        overflow-y: auto;
+        background-color: #2C2E65;
+        top: 60px;
+        position: relative;
+        max-height: calc(100vh - 60px);
+        height: 60px;
+
+        &::-webkit-scrollbar {
+            width: 9px;
+            height: 9px;
+            padding-top: 0px;
+            z-index: 1;
+            display: none;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background-color: #ffffff !important;
+            border-radius: 10px;
+            border: 3px solid #ffffff;
+        }
+    }
+
+    .menu li:not(:last-child) {
+        border-right: 1px solid #fff;
+        height: 36px;
+        position: relative;
+        margin-top: 8px;
+    }
+
+}
+
+@media (min-width: 768px) {
+
+    .menu-container {
+        overflow-x: auto;
+        white-space: nowrap;
+        overflow-y: auto;
+        background-color: #2C2E65;
+        top: 60px;
+        position: relative;
+        max-height: calc(100vh - 60px);
+        height: 60px;
+
+        &::-webkit-scrollbar {
+            width: 9px;
+            height: 9px;
+            padding-top: 0px;
+            z-index: 1;
+            display: none;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background-color: #ffffff !important;
+            border-radius: 10px;
+            border: 3px solid #ffffff;
+        }
+    }
+
+    .menu li:not(:last-child) {
+        border-right: 1px solid #fff;
+        height: 36px;
+        position: relative;
+        margin-top: 8px;
+    }
+
+}
+
+@media (min-width: 992px) {
+    .menu-container {
+        overflow-x: auto;
+        white-space: nowrap;
+        overflow-y: auto;
+        background-color: #2C2E65;
+        top: 60px;
+        position: relative;
+        max-height: calc(100vh - 60px);
+        height: 60px;
+
+        &::-webkit-scrollbar {
+            width: 9px;
+            height: 9px;
+            padding-top: 0px;
+            z-index: 1;
+            display: none;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background-color: #ffffff !important;
+            border-radius: 10px;
+            border: 3px solid #ffffff;
+        }
+    }
+
+    .menu li:not(:last-child) {
+        border-right: 1px solid #fff;
+        height: 36px;
+        position: relative;
+        margin-top: 8px;
+    }
+
+}
+
+@media (min-width: 1200px) {
+    .menu-container {
+        overflow-x: auto;
+        white-space: nowrap;
+        overflow-y: auto;
+        background-color: #2C2E65;
+        top: 60px;
+        position: relative;
+        max-height: calc(100vh - 60px);
+        height: 60px;
+
+        &::-webkit-scrollbar {
+            width: 9px;
+            height: 9px;
+            padding-top: 0px;
+            z-index: 1;
+            display: none;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background-color: #ffffff !important;
+            border-radius: 10px;
+            border: 3px solid #ffffff;
+        }
+    }
+
+    .menu li:not(:last-child) {
+        border-right: 1px solid #fff;
+        height: 36px;
+        position: relative;
+        margin-top: 8px;
+    }
+
+}
+
+.menu {
+    display: inline-flex;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.menu li {
+    margin-right: 20px;
+    width: 200px;
+    text-align: center;
+}
+
+.menu li a {
+    color: #ffffff;
+    text-decoration: none;
+    padding: 10px;
+    font-size: 1.5rem;
+    font-family: "Segoe-UI";
+}
+
+.scroll-container {
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+.scroll-button {
+    position: fixed;
+    top: 12%;
+    font-size: 20px;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.fixed-buttons {
+    position: absolute;
+    top: 60px;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    height: 60px;
+    // z-index: 1000;
+}
+
+.scroll-button-left,
+.scroll-button-right {
+    color: white;
+    border: none;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    font-size: 2em;
+}
+
+.scroll-button-left {
+    height: 60px;
+    padding-left: 20px;
+    background: linear-gradient(to left, rgba(0, 0, 0, 0), rgb(16 18 81 / 1));
+}
+
+.scroll-button-right {
+    height: 60px;
+    padding-right: 20px;
+    background: linear-gradient(to left, rgb(16 18 81 / 1), rgba(0, 0, 0, 0), );
+    right: 0px;
+    position: absolute;
+}
+.bg-login{
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(to right, #FF8A00, #FF7800, #FF6F00, #FF6500, #FF6300);
+}
+body{
+    width: 100%;
+    height: auto;
+    --background: linear-gradient(to right, #FF8A00, #FF7800, #FF6F00, #FF6500, #FF6300);
+    border-radius: 10px;
+}
+ion-content {
+    height: 100vh;
+    overflow: hidden;
+}
+.registro{
+    color: #19713E;
+    font-family: "Barlow-Semibold";
+    font-size: 18px;
+}
+
+/* Diseño de nuevo login */
+
+.login-sect{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.login-container{
+    background-color: white;
+    inline-size: 100%;
+    position: relative;
+    border-radius: 20px 20px 0 0;
+}
+
+.input-cont{
+    margin-block: 15px;
+}
+
+.input-cont label{
+    color: #8B8B8B;
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.btn-segment{
+    font-size: 17px;
+    font-weight: bold;
+    color: #E9610B;
+}
+
+.btn-unfocus{
+    font-size: 17px;
+    font-weight: bold;
+    color: #ABABAB;
+}
+
+.login-title{
+    color: white;
+    padding: 20px;
+    block-size: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    h1{
+        text-transform: uppercase;
+        font-weight: bold;
+        font-size: 25px;
+        margin-block: 0;
+    }
+
+    p{
+        margin-block-end: 0px;
+        font-weight: bold;
+        font-size: 13px;
+        margin-block: 0;
+    }
+
+    img{
+        block-size: 100px;
+        inline-size: 100px;
+    }
+}
+
+.select-cont{
+    display: flex;
+    margin-block: 15px;
+    justify-content: space-between;
+
+    ion-select.d-select{
+        inline-size: 48%;
+    }
+}
+
+ion-select::part(icon) {
+  display: none;
+}
+
+.tab-login{
+    padding: 20px 20px 0px 20px;
+}
+
+ion-segment-content{
+    padding: 10px 20px 20px 20px;
+}
+
+.login{
+    block-size: 450px;
+    overflow: hidden;
+}
+
+.register{
+    block-size: auto;
+}

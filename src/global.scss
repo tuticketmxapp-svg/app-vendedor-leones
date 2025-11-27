@@ -34,4 +34,72 @@
 
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import "@ionic/angular/css/palettes/dark.system.css";
+//@import "@ionic/angular/css/palettes/dark.system.css";
+.modal-custom::part(content) {
+  border-radius: 20px 20px 0 0 !important;
+  overflow: hidden;
+}
+
+.modal-custom::part(backdrop) {
+  --backdrop-opacity: 0.6 !important;
+  opacity: 0.6 !important;
+}
+
+ion-content{
+  --background: transparent !important;
+}
+
+ion-header.header-custom{
+  position: relative;
+  display: flex;
+  box-shadow: black 0 0;
+  block-size: 80px;
+  align-items: center;
+
+  ion-toolbar{
+    --background: transparent;
+    block-size: 72px;
+    display: flex;
+    padding-inline: 15px;
+
+    .toolbar-title{
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 22px;
+      font-weight: bold;
+      color: black;
+    }
+
+    ion-button{
+        
+      background: #F6F6F6;
+      inline-size: 50px;
+      block-size: 50px;
+      border-radius: 20px;
+      box-shadow: #00000024 0 2px 8px;
+      color: #232323;
+      --border-radius: 20px !important;
+
+      ion-icon{
+        inline-size: 24px;
+        block-size: 24px;
+      }
+
+    }
+
+    ion-badge{
+      position: absolute;
+      inset-inline-end: 0px;
+      inset-block-start: -3px;
+      border-radius: 50%;
+      block-size: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      min-inline-size: 21px;
+    }
+  }
+}

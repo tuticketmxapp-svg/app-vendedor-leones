@@ -1,0 +1,171 @@
+<ion-header class="header-custom" [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+
+      <ion-menu-button></ion-menu-button>
+
+    </ion-buttons>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="main-content has-header pt-4 bg-login" id="main-content">
+
+  <div class="bg-login login-sect">
+
+    <div class="login-title">
+      <img src="assets/img/leones-image.png" alt="">
+      <h1>¡Inicia sesión y únete a nosotros!</h1>
+      <p>Ingresa para ver tus eventos y administrar tu perfil.</p>
+    </div>
+
+    <div class="login-container">
+
+      <div class="tab-login">
+
+        <ion-segment value="login" mode="ios" style="block-size: 38px;" (ionChange)="onTab()" [(ngModel)]="tabS">
+
+          <ion-segment-button value="login" content-id="login" class="btn-segment" [ngClass]="{ 'btn-segment': tabS == 'login', 'btn-unfocus': tabS !== 'login' }">
+            <ion-label>Iniciar sesión</ion-label>
+          </ion-segment-button>
+
+          <ion-segment-button value="register" content-id="register" [ngClass]="{ 'btn-segment': tabS == 'register', 'btn-unfocus': tabS !== 'register' }">
+            <ion-label>Registrarse</ion-label>
+          </ion-segment-button>
+          
+        </ion-segment>
+
+      </div>
+
+      <div>
+
+        <ion-segment-view>
+
+          <ion-segment-content id="login">
+
+            <div class="input-cont">
+              <label> Correo electrónico </label>
+              <ion-input type="text" class="form-control inputs-form" [(ngModel)]="userLogin.email" mode="ios" color="dark"></ion-input>
+            </div>
+
+            <div class="input-cont">
+
+              <label for="password"> Contraseña </label>
+
+              <ion-input [type]="showPassword ? 'text' : 'password'" id="passwordL" name="passwordL" class="form-control inputs-form password-input" [(ngModel)]="userLogin.password" mode="ios"> 
+
+                <ion-icon slot="end" [name]="showPassword ? 'eye' : 'eye-off'" (click)="togglePassword()" class="toggle-password" size="large"></ion-icon> 
+
+              </ion-input> 
+
+            </div>
+
+            <p (click)="forgetPassword()" class="olvidaste cursor-pointer"> ¿Olvidaste tu contraseña? </p>
+
+            <ion-button expand="block" class="btn-login" (click)="login()"> Iniciar sesión </ion-button>
+
+            <div class="line-container">
+              <hr/> <span>&nbsp; O &nbsp;</span> <hr/>
+            </div>
+
+            <ion-button expand="block" class="btn-google mb-4"> <img src="./assets/img/google.svg" alt="" />&nbsp;CONTINUAR CON GOOGLE </ion-button>
+
+            <p>¿No tienes cuenta aún? <a (click)="tabS = 'register'" class="olvidaste">Regístrate aquí</a></p> 
+
+          </ion-segment-content>
+
+          <ion-segment-content id="register" [ngClass]="{ 'login': tabS == 'login', 'register': tabS !== 'login' }">
+
+            <form [formGroup]="formulario">
+
+              <div class="input-cont">
+                <label for="name" *ngIf="!formulario.get('name')?.hasError('required') || !validateName"> Nombre completo </label>
+                <label class="validateForm" style="color: #d90000;" *ngIf="formulario.get('name')?.hasError('required') && validateName"> Nombre completo es obligatorio. </label>
+                <ion-input type="text" id="name" class="form-control inputs-form" formControlName="name" [(ngModel)]="userR.name"> </ion-input>
+              </div>
+
+              <div class="input-cont">
+                <label for="name" *ngIf="!formulario.get('email')?.hasError('required') || !validateEmail"> Email (Correo electrónico) </label>
+                <label class="validateForm" style="color: #d90000;" *ngIf="formulario.get('email')?.hasError('required') && validateEmail"> Email es obligatorio </label>
+                <ion-input type="text" id="email" formControlName="email" [(ngModel)]="userR.email" class="form-control inputs-form password-input"> </ion-input>
+              </div>
+
+              <div class="input-cont">
+                <label for="name" *ngIf="!formulario.get('email2')?.hasError('required') || !validateEmail2"> Confirmar email (Correo electrónico) * </label>
+                <label class="validateForm" style="color: #d90000;" *ngIf="formulario.get('email2')?.hasError('required') && validateEmail2"> Confirmar email es obligatorio </label>
+                <label class="validateForm" style="color: #d90000;" *ngIf="formulario?.hasError('correosNoCoinciden') && formulario.get('email2')?.value?.length > 0"> Los correos no coindicen </label>
+                <ion-input type="text" id="email2" formControlName="email2" [(ngModel)]="userR.email2" class="form-control inputs-form password-input"> </ion-input>
+              </div>
+
+              <div class="select-cont">
+
+                  <ion-select expandedIcon="remove" (ionChange)="chanceCountry($event)" [(ngModel)]="userR.country" formControlName="country" id="country" class="form-select form-control inputs-form d-select">
+
+                    <ion-select-option value="">Pais</ion-select-option>
+                    <ion-select [(ngModel)]="userR.country" formControlName="country">
+                      <ion-select-option *ngFor="let country of listCountries"
+                        [value]="country.name">
+                        {{ country.name }}
+                      </ion-select-option>
+                    </ion-select>
+
+                  </ion-select>
+
+                  <ion-select formControlName="country">
+                    <ion-select-option *ngFor="let country of listCountries" [value]="country.name">
+                      {{ country.name }}
+                    </ion-select-option>
+                  </ion-select>
+              </div>
+
+              <div class="select-cont">
+
+                <ion-select [(ngModel)]="userR.city" formControlName="city" id="city" class="form-select form-control inputs-form">
+
+									<ion-select-option value="">Ciudad</ion-select-option>
+									<ion-select-option *ngFor="let city of listCities" [value]="city.name"> {{ city.name }} </ion-select-option>
+
+								</ion-select>
+
+              </div>
+
+              <div class="input-cont">
+                <label *ngIf="!formulario.get('password')?.hasError('required') || !validatePassword"> Contraseña </label>
+                <label class="validateForm" style="color: #d90000;" *ngIf="formulario.get('password')?.hasError('required') && validatePassword"> Contraseña es obligatoria </label>
+
+                <ion-input [type]="showPassword2 ? 'text' : 'password'" id="password" [(ngModel)]="userR.password" formControlName="password" class="form-control inputs-form password-input">
+                  
+                  <ion-icon slot="end" [name]="showPassword2 ? 'eye' : 'eye-off'" (click)="togglePassword2()" class="toggle-password" size="large"></ion-icon> 
+                  
+                </ion-input>
+              </div>
+
+              <div class="input-cont">
+                <label *ngIf="!formulario.get('password_confirmation')?.hasError('required') || !validatePassword_confirmation"> Confirmar contraseña * </label>
+                <label class="validateForm" style="color: #d90000;" *ngIf="formulario.get('password_confirmation')?.hasError('required') && validatePassword_confirmation"> Confirmar contraseña es obligatorio </label>
+                <label class="validateForm" style="color: #d90000;" *ngIf="formulario?.hasError('passwordNoCoinciden') && formulario.get('password_confirmation')?.value?.length > 0"> Las contraseñas no coinciden </label>
+
+                <ion-input [type]="showPasswordConfirm ? 'text' : 'password'" id="password_confirmation" [(ngModel)]="userR.password_confirmation" formControlName="password_confirmation" class="form-control inputs-form password-input"> 
+
+                  <ion-icon slot="end" [name]="showPasswordConfirm ? 'eye' : 'eye-off'" (click)="togglePasswordConfirm()" class="toggle-password" size="large"></ion-icon> 
+
+                </ion-input>
+              </div>
+
+              <ion-button expand="block" class="btn-login" (click)="registro()"> Registrarse </ion-button>
+
+              <div class="line-container"> <hr/> <span>&nbsp; O &nbsp;</span> <hr/> </div>
+
+            </form>
+
+          </ion-segment-content>
+
+        </ion-segment-view>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</ion-content>

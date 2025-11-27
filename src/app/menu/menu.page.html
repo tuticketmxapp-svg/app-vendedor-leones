@@ -1,0 +1,66 @@
+<ion-menu side="start" content-id="main-content" menuId="main-menu" class="menu-custom">
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>Menú</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content>
+    <ion-list>
+      <!-- RUGIABONO -->
+       <ion-item href="/home">
+        <ion-icon slot="start" name="home-outline"></ion-icon>
+        <ion-label>Inicio</ion-label>
+      </ion-item>
+
+      <ion-item *ngIf="me !== undefined" href="/user/rugiabono">
+        <ion-icon slot="start" name="trophy-outline"></ion-icon>
+        <ion-label>RUGIABONO</ion-label>
+      </ion-item>
+      <ion-item *ngIf="me !== undefined" >
+        <ion-icon slot="start" name="trophy-outline"></ion-icon>
+        <ion-label>Preventa</ion-label>
+      </ion-item>
+      <ion-item *ngIf="me !== undefined" href="/user/ticketsAbonados">
+        <ion-icon slot="start" name="ticket-outline"></ion-icon>
+        <ion-label>Tickets</ion-label>
+      </ion-item>
+      <ion-item *ngIf="me !== undefined" href="/user/shop/leones">
+        <ion-icon slot="start" name="bag-outline"></ion-icon>
+        <ion-label>Leones Shop</ion-label>
+      </ion-item>
+      <!-- Próximos y Pasados Eventos -->
+      <ion-item *ngIf="me !== undefined" href="/user/proximos/eventos">
+        <ion-icon slot="start" name="calendar-outline"></ion-icon>
+        <ion-label>Mis próximos eventos</ion-label>
+      </ion-item>
+      <ion-item *ngIf="me !== undefined" href="/user/eventos/pasados">
+        <ion-icon slot="start" name="time-outline"></ion-icon>
+        <ion-label>Mis eventos pasados</ion-label>
+      </ion-item>
+      <!-- Perfil y Ayuda -->
+      <ion-item *ngIf="me !== undefined" href="/user/perfil">
+        <ion-icon slot="start" name="person-outline"></ion-icon>
+        <ion-label>Perfil</ion-label>
+      </ion-item>
+      <ion-item *ngIf="me !== undefined" href="/user/monedero">
+        <ion-icon slot="start" name="card-outline"></ion-icon>
+        <ion-label>Monedero</ion-label>
+      </ion-item>
+      <ion-item *ngIf="me === undefined" href="/login">
+        <ion-icon slot="start" name="person-outline"></ion-icon>
+        <ion-label>Inicio de sesión</ion-label>
+      </ion-item>
+    
+      <ion-item href="/user/ayuda">
+        <ion-icon slot="start" name="help-circle-outline"></ion-icon>
+        <ion-label>¿Necesitas ayuda?</ion-label>
+      </ion-item>
+      <!-- Cerrar Sesión -->
+      <ion-item *ngIf="me !== undefined" (click)="cerrarSesion()">
+        <ion-icon slot="start" name="log-out-outline"></ion-icon>
+        <ion-label>Cerrar Sesión</ion-label>
+      </ion-item>
+    </ion-list>
+    
+  </ion-content>
+</ion-menu>
