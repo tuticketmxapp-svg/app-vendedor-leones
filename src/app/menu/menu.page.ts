@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
-import { PerfilService } from 'src/services/perfil.service';
 import { Subscription } from 'rxjs';
 import { EventService } from 'src/services/event.service';
 import { LocalStorageService } from 'src/services/UserDataService.service';
@@ -15,6 +14,7 @@ import { UserService } from 'src/services/user.service';
   selector: 'app-menu', // Asegúrate de que esto sea 'app-menu'
   templateUrl: './menu.page.html',
   styleUrls: ['./menu.page.scss'],
+  standalone: false
 })
 export class MenuComponent implements OnInit, OnDestroy {
   title = '';
@@ -28,7 +28,6 @@ export class MenuComponent implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
-    private perfilService: PerfilService,
     private cookie: CookieService,
     private eventService: EventService,
     private userDataService: LocalStorageService,
@@ -52,12 +51,12 @@ export class MenuComponent implements OnInit, OnDestroy {
   });
 
   this.subscription = this.eventService.userUpdated$.subscribe(() => {
-      const userData = this.userDataService.getItem('user_data');
+      const userData: any = this.userDataService.getItem('user_data');
       this.me = JSON.parse(userData);
     });
     this.subscription = this.eventService.userUpdated$.subscribe(() => {
       console.log('entre al subscription');
-      const userData = this.userDataService.getItem('user_data');
+      const userData: any = this.userDataService.getItem('user_data');
       this.me = JSON.parse(userData);
       console.log('this.me', this.me);
     });
@@ -90,7 +89,7 @@ export class MenuComponent implements OnInit, OnDestroy {
    
   }
   onActivate(event: any) {
-    const userData = this.userDataService.getItem('user_data');
+    const userData: any = this.userDataService.getItem('user_data');
     this.me = JSON.parse(userData);
 }
   cerrarSesion() {

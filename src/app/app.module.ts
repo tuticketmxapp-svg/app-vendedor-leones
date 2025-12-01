@@ -9,6 +9,8 @@ import { AppRoutingModule } from './app-routing.module';
 
 //  IMPORTANTE: importar HttpClientModule
 import { HttpClientModule } from '@angular/common/http';
+import { SharedModule } from './shared.module';
+
 
 @NgModule({
   declarations: [AppComponent],
@@ -16,6 +18,7 @@ import { HttpClientModule } from '@angular/common/http';
     BrowserModule,
     IonicModule.forRoot(),
     AppRoutingModule,
+    SharedModule,
 
     // registrar HttpClientModule aquí
     HttpClientModule,

@@ -1,20 +1,125 @@
-<ion-header [translucent]="true">
+<app-menu></app-menu>
+
+<ion-header class="header-custom">
   <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
+    <ion-buttons slot="start">
+
+      <ion-menu-button></ion-menu-button>
+
+    </ion-buttons>
+
+    <p class="toolbar-title">LEONES SHOP</p>
+
+    <ion-buttons slot="end">
+
+      <ion-button color="white" style="font-weight: bold;" (click)="goCart()">
+        <ion-icon name="cart-outline" size="large"></ion-icon>
+        
+      </ion-button>
+
+      <ion-badge color="danger">{{ userService.cartCount || 0 }}</ion-badge>
+
+    </ion-buttons>
+
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+<ion-content id="main-content">
+  <div class="mb-2 tipografia">
+
+
+    <ion-segment value="home" style="margin-block-end: 10px;" color="light" (ionChange)="onTab()" [(ngModel)]="tabS">
+
+      <ion-segment-button value="home" content-id="banner" (click)="onTab()">
+        <ion-label>INICIO</ion-label>
+      </ion-segment-button>
+
+      <ion-segment-button value="category" content-id="categories" (click)="onTab()">
+        <ion-label>CATEGORÍAS</ion-label>
+      </ion-segment-button>
+
+    </ion-segment>
+
+    <!-- Simulación de slider con scroll horizontal -->
+
+    <ion-segment-view  >
+
+      <ion-segment-content id="banner">
+
+        <div class="banner-content animation-c" [ngClass]="{ 'categories-content': isCategoriesTab, 'banner-content': !isCategoriesTab }">
+
+          <div class="banner-img-cont">
+
+
+            
+          </div>
+
+          <img src="assets/img/leones-image.png" class="img-logoL">
+        </div>
+
+      </ion-segment-content>
+
+      <ion-segment-content id="categories">
+        
+        <div class="d-flex w-100 scroll-x">
+      
+          <div *ngFor="let category of CategoriesList" class="text-center categories-card" (click)="onSelect(category)" [ngClass]="{ 'select': selectedItem === category, 'no-select': selectedItem !== category && selectedItem !== 'none' }">
+            <img src="{{ category.imagen }}"  alt="{{ category.nombre }}" class="rounded-circle">
+            <p class="fw-bold mt-2">{{ category.nombre }}</p>
+          </div>
+
+        </div>
+
+      </ion-segment-content>
+
+    </ion-segment-view>
+    
+    <div class="d-flex flex-wrap gap-2 justify-content-center w-100 px-2" *ngIf="categorySelected != 'none'">
+
+      <div *ngFor="let product of ProductList" class="card border-0 product-card" (click)="onSelectProduct(product)">
+        <img src="{{ product.imagen }}" 
+             alt="{{ product.nombre }}" 
+             class="card-img-top rounded-3 product-img-card">
+        <div class="">
+          <h5 class="fw-bold m-1">{{ product.nombre }}</h5>
+          <p class="m-1">${{ product.precio | number:'1.2-2' }} MXN</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div *ngIf="categorySelected === 'none'">
+      
+      <p class="sbtitle-p">NUEVOS PRODUCTOS</p>
+    
+      <div class="d-flex flex-wrap gap-2 justify-content-center w-100 px-2">
+
+        <div *ngFor="let product of ProductList" class="card border-0 product-card" (click)="onSelectProduct(product)">
+
+          <div class="product-img-card">
+            <img src="{{ product.imagen }}" alt="{{ product.nombre }}" class="card-img-top rounded-3">
+          </div>
+
+          <div class="">
+
+            <h5 class="fw-bold m-1">{{ product.nombre }}</h5>
+            <p class="m-1">${{ product.precio | number:'1.2-2' }} MXN</p>
+
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <div *ngIf="ProductList.length < 1" class="no-product-cont">
+
+      <img src="assets/img/NotFound2.svg" alt="" class="no-product-img">
+      <p>No hay productos disponibles en esta categoría</p>
+
+    </div>
+
   </div>
+  
 </ion-content>

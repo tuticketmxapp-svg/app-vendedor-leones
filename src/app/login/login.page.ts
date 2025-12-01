@@ -11,7 +11,6 @@ import { LoginWebService } from 'src/services/loginWeb.service';
 import { Subscription } from 'rxjs';
 import { SweetAlertService } from 'src/services/sweet-alert.service';
 import { LottieService } from 'src/services/lottie.service';
-import { CookieService } from 'ngx-cookie-service';
 import { LocalStorageService } from 'src/services/UserDataService.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ModalController } from '@ionic/angular';
@@ -92,7 +91,6 @@ export class LoginPage implements OnInit, OnDestroy {
     private loginService: LoginWebService,
     private loaderService: LottieService,
     private route: Router,
-    private cookie: CookieService,
     private userDataService: LocalStorageService,
     private fb: FormBuilder,
     private modalController: ModalController

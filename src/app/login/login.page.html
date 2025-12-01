@@ -1,3 +1,5 @@
+<app-menu></app-menu>
+
 <ion-header class="header-custom" [translucent]="true">
   <ion-toolbar>
     <ion-buttons slot="start">
@@ -27,10 +29,6 @@
 
           <ion-segment-button value="login" content-id="login" class="btn-segment" [ngClass]="{ 'btn-segment': tabS == 'login', 'btn-unfocus': tabS !== 'login' }">
             <ion-label>Iniciar sesión</ion-label>
-          </ion-segment-button>
-
-          <ion-segment-button value="register" content-id="register" [ngClass]="{ 'btn-segment': tabS == 'register', 'btn-unfocus': tabS !== 'register' }">
-            <ion-label>Registrarse</ion-label>
           </ion-segment-button>
           
         </ion-segment>

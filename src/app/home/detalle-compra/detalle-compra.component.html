@@ -1,0 +1,451 @@
+<app-menu></app-menu>
+<ion-header class="header-custom">
+
+  <ion-toolbar>
+    <ion-buttons slot="start">
+
+      <ion-button style="font-weight: bold;" (click)="back()">
+        <ion-icon name="arrow-back-outline" size="large"></ion-icon>
+      </ion-button>
+
+    </ion-buttons>
+
+    <p class="toolbar-title">Detalle compras</p>
+
+    <ion-buttons slot="end">
+
+      <ion-button style="font-weight: bold;" (click)="goCart()">
+        <ion-icon name="cart-outline" size="large"></ion-icon>
+        
+      </ion-button>
+
+      <ion-badge color="danger">{{ userService.cartCount || 0 }}</ion-badge>
+
+    </ion-buttons>
+
+  </ion-toolbar>
+
+</ion-header>
+
+<ion-content id="main-content" class="tipografia">
+
+  <div>
+    <p class="text-center"> {{ productCount }} artículos seleccionados</p>
+  
+    <!-- Detalle de compra -->
+
+    <div class="product-list">
+      <ion-list>
+        <ion-item *ngFor="let product of products">
+
+          <ion-grid>
+
+            <ion-row class="product-info">
+
+              <ion-col size="3" class="product-image">
+
+                <div>
+                  <img src="{{ product.imagen }}" alt="{{ product.nombre }}" class="img-fluid" style="max-height: 100px;">
+                </div>
+
+              </ion-col>
+
+              <ion-col size="9" class="product-name">
+
+                <ion-row><h5> {{ product.nombre }} </h5></ion-row>
+                <ion-row style="block-size: 30px;"> <ion-col size="9"><p class="price1">${{ ( product.precio + product.comision ) | number:'1.2-2' }} MXN c/u</p> </ion-col> <ion-col size="3"> <p class="end count">x{{ product.count }}</p></ion-col> </ion-row>
+                <ion-row style="block-size: 30px;"> <ion-col><p>Elegido: <strong style="margin-inline-start: 5px;"> {{ product.atributo }} </strong></p></ion-col> <ion-col><p class="end fw-bold"> ${{ (( product.precio + product.comision ) * product.count) | number:'1.2-2' }} MXN </p></ion-col> </ion-row>
+
+              </ion-col>
+
+            </ion-row>
+
+          </ion-grid>
+
+        </ion-item>
+
+      </ion-list>
+    </div>
+
+    <!-- Resumen de pago -->
+    <div class="payment-list">
+      <ion-grid>
+
+        <ion-row> <ion-col> <p class="title">Subtotal:</p> </ion-col> <ion-col> <p class="number">${{ ( subtotalStr ) | number:'1.2-2' }} MXN</p> </ion-col> </ion-row>
+        <ion-row> <ion-col> <p class="title">Cargo servicio:</p> </ion-col> <ion-col> <p class="number">${{ cargoBancario | number:'1.2-2' }} MXN</p> </ion-col> </ion-row>
+        <ion-row> <ion-col> <p class="title">Costo administrativo:</p> </ion-col> <ion-col> <p class="number">$0.00 MXN</p> </ion-col> </ion-row>
+        <ion-row class="custom"> <ion-col> <p class="title">Total a pagar:</p> </ion-col> <ion-col> <p class="number">${{ totalCobrarStr | number:'1.2-2' }} MXN</p> </ion-col> </ion-row>
+        
+      </ion-grid>
+    </div>
+
+    <div class="promo-code">
+      <ion-input mode="ios" placeholder="Ingrese código de cupón"></ion-input>
+      <ion-button>Aplicar</ion-button>
+    </div>
+
+    <!-- Selección de tipo de pago -->
+    <div>
+      <label class="label-custom">Seleccione su tipo de pago</label>
+      <ion-radio-group [(ngModel)]="methodPay">
+
+        <div class="radio-custom" [ngClass]="methodPay == 'monedero' ? 'selected' : ''">
+
+          <ion-radio value="monedero" labelPlacement="end">Monedero</ion-radio>
+          <img src="assets/img/card.jpeg" alt="">
+
+        </div>
+
+        <div class="radio-custom" [ngClass]="methodPay == 'openpay' ? 'selected' : ''">
+
+          <ion-radio value="openpay" labelPlacement="end">OpenPay</ion-radio>
+          <img src="assets/img/openpay.png" alt="">
+
+        </div>
+
+      </ion-radio-group>
+
+    </div>
+
+    <div class="container mt-4 mb-2">
+
+      <!-- Campos de datos del cliente -->
+
+      <ion-grid class="custom-input-cont">
+
+        <ion-row class="title-cont"> <ion-col> <p>Datos del cliente</p> </ion-col> </ion-row>
+
+        <ion-row> 
+          
+          <ion-col> 
+            
+            <div class="input-cont">
+              <label> Nombre completo </label>
+              <ion-input type="text" class="form-control inputs-form" [(ngModel)]="userData.name" mode="ios" [ngClass]="!isValidName ? 'bColorRed' : ''"></ion-input>
+              <ion-row class="alert" *ngIf="!isValidName"> <ion-icon name="alert-circle"></ion-icon> <p> Este campo es obligario. </p> </ion-row>
+            </div>
+
+          </ion-col>
+           
+        </ion-row>
+
+        <ion-row> 
+          
+          <ion-col> 
+            
+            <div class="input-cont">
+              <label> Email (Correo electrónico) </label>
+              <ion-input type="text" class="form-control inputs-form" [(ngModel)]="userData.email" mode="ios" [ngClass]="!isValidEmail ? 'bColorRed' : ''"></ion-input>
+              <ion-row class="alert" *ngIf="!isValidEmail"> <ion-icon name="alert-circle"></ion-icon> <p> Este campo es obligario. </p> </ion-row>
+            </div>
+
+          </ion-col>
+           
+        </ion-row>
+
+        <ion-row> 
+          
+          <ion-col> 
+            
+            <div class="input-cont">
+              <label> Número de teléfono </label>
+              <ion-input type="text" class="form-control inputs-form" maxlength="10" [(ngModel)]="userData.telefono" mode="ios" [ngClass]="!isValidTelefono ? 'bColorRed' : ''"></ion-input>
+              <ion-row class="alert" *ngIf="!isValidTelefono"> <ion-icon name="alert-circle"></ion-icon> <p> Este campo es obligario. </p> </ion-row>
+            </div>
+
+          </ion-col>
+           
+        </ion-row>
+
+        <ion-row> 
+          
+          <ion-col> 
+            
+            <div class="input-cont">
+              <label> Dirección </label>
+              <ion-input type="text" class="form-control inputs-form" [(ngModel)]="userData.calle" mode="ios" [ngClass]="!isValidCalle ? 'bColorRed' : ''"></ion-input>
+              <ion-row class="alert" *ngIf="!isValidCalle"> <ion-icon name="alert-circle"></ion-icon> <p> Este campo es obligario. </p> </ion-row>
+            </div>
+
+          </ion-col>
+           
+        </ion-row>
+
+        <ion-row> 
+          
+          <ion-col size="6"> 
+            
+            <div class="input-cont">
+              <ion-input type="text" class="form-control inputs-form" [(ngModel)]="userData.country" mode="ios" [ngClass]="!isValidCountry ? 'bColorRed' : ''"></ion-input>
+              <ion-row class="alert" *ngIf="!isValidCountry"> <ion-icon name="alert-circle"></ion-icon> <p> Este campo es obligario. </p> </ion-row>
+            </div>
+
+          </ion-col>
+
+          <ion-col size="6"> 
+            
+            <div class="input-cont">
+              <ion-input type="text" class="form-control inputs-form" [(ngModel)]="userData.state" mode="ios" [ngClass]="!isValidState ? 'bColorRed' : ''"></ion-input>
+              <ion-row class="alert" *ngIf="!isValidState"> <ion-icon name="alert-circle"></ion-icon> <p> Este campo es obligario. </p> </ion-row>
+            </div>
+
+          </ion-col>
+           
+        </ion-row>
+
+        <ion-row> 
+          
+          <ion-col> 
+            
+            <div class="input-cont">
+              <ion-input type="text" class="form-control inputs-form" [(ngModel)]="userData.city" mode="ios" [ngClass]="!isValidCity ? 'bColorRed' : ''"></ion-input>
+              <ion-row class="alert" *ngIf="!isValidCity"> <ion-icon name="alert-circle"></ion-icon> <p> Este campo es obligario. </p> </ion-row>
+            </div>
+
+          </ion-col>
+           
+        </ion-row>
+
+        <ion-row> 
+          
+          <ion-col> 
+            
+            <div class="input-cont">
+              <label> Colonia </label>
+              <ion-input type="text" class="form-control inputs-form" [(ngModel)]="userData.colonia" mode="ios" [ngClass]="!isValidColonia ? 'bColorRed' : ''"></ion-input>
+              <ion-row class="alert" *ngIf="!isValidColonia"> <ion-icon name="alert-circle"></ion-icon> <p> Este campo es obligario. </p> </ion-row>
+            </div>
+
+          </ion-col>
+           
+        </ion-row>
+
+        <ion-row> 
+          
+          <ion-col> 
+            
+            <div class="input-cont">
+              <label> Código postal </label>
+              <ion-input type="text" class="form-control inputs-form" [(ngModel)]="userData.cp" mode="ios" [ngClass]="!isValidCP ? 'bColorRed' : ''"></ion-input>
+              <ion-row class="alert" *ngIf="!isValidCP"> <ion-icon name="alert-circle"></ion-icon> <p> Este campo es obligario. </p> </ion-row>
+            </div>
+
+          </ion-col>
+           
+        </ion-row>
+
+        <ion-row> 
+          
+          <ion-col> 
+            
+            <div class="input-cont">
+              <label> Fecha de nacimiento </label>
+              <ion-input type="text" class="form-control inputs-form" [(ngModel)]="userData.fechaNacimiento" mode="ios" [ngClass]="!isValidCP ? 'bColorRed' : ''"></ion-input>
+              <ion-row class="alert" *ngIf="!isValidFechaNacimiento"> <ion-icon name="alert-circle"></ion-icon> <p> Este campo es obligario. </p> </ion-row>
+            </div>
+
+          </ion-col>
+           
+        </ion-row>
+
+      </ion-grid>
+    
+      <!-- Métodos de pago -->
+      <ion-grid class="custom-input-cont" *ngIf="methodPay === 'openpay'">
+
+        <ion-row class="title-cont"> <ion-col> <p>Openpay</p> </ion-col> </ion-row>
+
+        <ion-row> 
+          
+          <ion-col> 
+            
+            <div class="input-cont">
+              <label> Nombre del titular </label>
+              <ion-input type="text" class="form-control inputs-form" [(ngModel)]="userData.nameTitular" mode="ios" [ngClass]="!isValidNameTitular ? 'bColorRed' : ''"></ion-input>
+              <ion-row class="alert" *ngIf="!isValidNameTitular"> <ion-icon name="alert-circle"></ion-icon> <p> Este campo es obligatorio. </p> </ion-row>
+            </div>
+
+          </ion-col>
+           
+        </ion-row>
+
+        <ion-row> 
+          
+          <ion-col> 
+            
+            <div class="input-cont">
+              <label> Número de teléfono </label>
+              <ion-input type="text" class="form-control inputs-form" [(ngModel)]="userData.telefonoTitular" mode="ios" [ngClass]="!isValidTelefonoTitular ? 'bColorRed' : ''"></ion-input>
+              <ion-row class="alert" *ngIf="!isValidTelefonoTitular"> <ion-icon name="alert-circle"></ion-icon> <p> Este campo es obligatorio. </p> </ion-row>
+            </div>
+
+          </ion-col>
+           
+        </ion-row>
+
+        <ion-row> 
+          
+          <ion-col> 
+            
+            <div class="input-cont">
+              <label> Email (Correo electrónico) </label>
+              <ion-input type="text" class="form-control inputs-form" [(ngModel)]="userData.emailTitular" mode="ios" [ngClass]="!isValidEmailTitular ? 'bColorRed' : ''"></ion-input>
+              <ion-row class="alert" *ngIf="!isValidEmailTitular"> <ion-icon name="alert-circle"></ion-icon> <p> Este campo es obligatorio. </p> </ion-row>
+            </div>
+
+          </ion-col>
+           
+        </ion-row>
+
+        <ion-row> 
+          
+          <ion-col> 
+            
+            <div class="input-cont">
+              <label> Confirmar email (Correo electrónico) </label>
+              <ion-input type="text" class="form-control inputs-form" [(ngModel)]="userData.confirmarEmail" mode="ios" [ngClass]="!isValidConfirmarEmail ? 'bColorRed' : ''"></ion-input>
+              <ion-row class="alert" *ngIf="!isValidConfirmarEmail"> <ion-icon name="alert-circle"></ion-icon> <p> {{ userData.confirmarEmail != userData.emailTitular ? 'El correo no coincide' : 'Este campo es obligatorio.' }} </p> </ion-row>
+            </div>
+
+          </ion-col>
+           
+        </ion-row>
+
+        <ion-row> 
+          
+          <ion-col> 
+            
+            <div class="input-cont">
+              <label> Número de tarjeta </label>
+              <ion-input type="text" class="form-control inputs-form"  cardValidation [(ngModel)]="tarjeta" mode="ios" [ngClass]="!isValidTarjeta ? 'bColorRed' : ''"></ion-input>
+              <ion-row class="alert" *ngIf="!isValidTarjeta"> <ion-icon name="alert-circle"></ion-icon> <p> Este campo es obligatorio. </p> </ion-row>
+            </div>
+
+          </ion-col>
+           
+        </ion-row>
+
+        <ion-row> 
+          
+          <ion-col size="6"> 
+            
+            <div class="input-cont">
+              
+              <label> Vencimiento (MM/AA) </label>
+              <ion-input type="text" inputmode="numeric" (ionInput)="formatVal()" class="form-control inputs-form" maxlength="5" [(ngModel)]="fv" mode="ios" [ngClass]="!isValidFV ? 'bColorRed' : ''"></ion-input>
+              <ion-row class="alert" *ngIf="!isValidFV"> <ion-icon name="alert-circle"></ion-icon> <p> Este campo es obligatorio. </p> </ion-row>
+
+            </div>
+
+          </ion-col>
+
+          <ion-col size="6"> 
+            
+            <div class="input-cont">
+              <label> CVV/CVC </label>
+              <ion-input type="text" class="form-control inputs-form" maxlength="4" [(ngModel)]="cvv" mode="ios" [ngClass]="!isValidFV ? 'bColorRed' : ''"></ion-input>
+              <ion-row class="alert" *ngIf="!isValidCVV"> <ion-icon name="alert-circle"></ion-icon> <p> Este campo es obligatorio. </p> </ion-row>
+            </div>
+
+          </ion-col>
+           
+        </ion-row>
+
+      </ion-grid>
+      
+      
+      <div class="product-btn-cont">
+        <!-- Botones de compra -->
+        <div class="product-buttons">
+
+          <ion-grid>
+
+            <ion-row class="buttons-cart">
+
+              <ion-col size="12" style="display: flex; justify-content: flex-end;">
+                <ion-button (click)="openBuyModal()"> <ion-icon name="storefront-outline"></ion-icon> Comprar </ion-button>
+              </ion-col>
+
+            </ion-row>
+
+          </ion-grid>
+        
+          <ion-modal #buyModal trigger="open-buy" [initialBreakpoint]="0.35" [breakpoints]="[0.35]" style="--backdrop-opacity: 2.8;" cssClass="modal-custom">
+
+            <ng-template>
+
+              <ion-content>
+
+                <ion-grid class="payment-cont">
+
+                  <ion-row class="header">
+
+                    <ion-col size="12"><p>Confirmar compra</p></ion-col>
+
+                  </ion-row>
+
+                  <ion-row class="price">
+
+                    <ion-col size="12">
+
+                      <div>
+
+                        <p>${{ totalCobrarStr | number:'1.2-2' }} MXN</p>
+                        <ion-button (click)="closeBuyModal()"> <ion-icon name="create-outline"></ion-icon> </ion-button>
+
+                      </div>
+
+                    </ion-col>
+
+                  </ion-row>
+
+                  <ion-row>
+
+                    <ion-col size="12">
+
+                      <div class="card-cont">
+                        
+                        <div class="card-img">
+                          <div><img [src]="methodPay == 'monedero' ? 'assets/img/card.jpeg' : 'assets/img/openpay.png'" alt=""></div>
+                          <div class="desc">
+                            <p>{{ methodPay == 'monedero' ? 'Pago con monedero' : 'Pago con Openpay' }}</p>
+                            <p>{{ methodPay == 'monedero' ? 'Saldo restante: $0.00 MXN' : '**** **** **** ' + tarjeta.slice(-4) }}</p>
+                          </div>
+                        </div>
+
+                        <div class="price">
+                          <div>
+                            <ion-button (click)="closeBuyModal()"> <ion-icon name="create-outline"> </ion-icon> </ion-button>
+                          </div>
+                        </div>
+                        
+                      </div>
+
+                    </ion-col>
+
+                  </ion-row>
+
+                  <ion-row class="buttons-cart">
+
+                    <ion-col size="12" style="display: flex; justify-content: flex-end;">
+                      <ion-button (click)="saleProduct()" style="padding-inline: 20px;"> <ion-icon name="checkmark-outline" size="large"></ion-icon> Confirmar compra </ion-button>
+                    </ion-col>
+
+                  </ion-row>
+
+                </ion-grid>
+                
+              </ion-content>
+              
+            </ng-template>
+
+          </ion-modal>
+          
+        </div>
+        
+      </div>
+
+    </div>
+  </div>
+  <!-- <app-footer /> -->
+</ion-content>

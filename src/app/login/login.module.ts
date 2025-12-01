@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { RouterModule } from '@angular/router';
 import { LoginPage } from './login.page';
+import { SharedModule } from 'src/app/shared.module';
 
 @NgModule({
   imports: [
@@ -11,6 +12,7 @@ import { LoginPage } from './login.page';
     FormsModule,
     ReactiveFormsModule,
     IonicModule,
+    SharedModule,
     RouterModule.forChild([
       {
         path: '',

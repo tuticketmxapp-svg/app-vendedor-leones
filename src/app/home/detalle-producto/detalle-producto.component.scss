@@ -1,0 +1,334 @@
+.tipografia {
+    font-family: "Barlow-Semibold", sans-serif;
+}
+
+:host{
+    background: linear-gradient(70deg, #e1e1e1 -20%, #ffffff 50%);
+}
+
+ion-header{
+    position: relative;
+}
+
+ion-content{
+    --background: transparent !important;
+}
+
+main{
+    position: relative;
+    overflow: auto;
+    scrollbar-width: thin;
+}
+
+.product-banner{
+    inline-size: 100%;
+    padding-block: 25px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    border-style: solid;
+    border-radius: 20px;
+    color: #EFEFEF;
+    border-width: 14px;
+    //box-shadow: #0000000d 0 4px 6px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    block-size: 343px;
+}
+
+.btn-share{
+    ion-button{
+        position: absolute;
+        inset-inline-end: 0;
+        inset-block-start: 0;
+        margin: 0;
+        --background: transparent;
+        color: black;
+        block-size: 44px;
+        inline-size: 44px;
+        --box-shadow: black 0 0;
+        outline-style: solid;
+        outline-color: #EFEFEF;
+        outline-width: 12px;
+        --border-radius: 12px;
+        border-radius: 12px;
+
+        ion-icon{
+            inline-size: 28px;
+            block-size: 28px;
+            position: absolute;
+        }
+    }
+}
+
+ion-skeleton-text{
+    border-radius: 10px;
+    margin: 0;
+}
+
+/* Sección donde no existe el producto */
+
+.no-product-cont{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    block-size: 100%;
+    padding: 20px;
+}
+
+.no-product-cont p{
+    color: #A1A1A1;
+    font-size: 18px;
+    text-align: center;
+}
+
+.no-product-img{
+    inline-size: 18vh;
+}
+
+.product-img-tar{
+    block-size: 80px;
+    inline-size: 80px;
+    background: #dfdfdf;
+    border-radius: 15px;
+    margin-inline-end: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-inline-size: 80px;
+    border-style: solid;
+    border-width: 2px;
+    border-color: #4dad41;
+
+    img{
+        block-size: 90%;
+    }
+}
+
+.product-det-tar{
+
+    padding-block: 15px;
+
+    h1{
+        font-size: 18px;
+        font-weight: bold;
+        margin: 0;
+    }
+
+    p{
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 65%;
+        margin: 0;
+        font-size: 15px;
+    }
+}
+
+.buttons-cart{
+
+    margin-block-start: 10px;
+
+    ion-button{
+        --background: var(--primary-color);
+        block-size: 45px;
+        --border-radius: 15px;
+        --box-shadow: #d7d7d7 0px 1px 5px;
+        inline-size: 100%;
+        text-transform: none;
+        font-size: 14px;
+
+        ion-icon{
+            inline-size: 30px;
+            block-size: 30px;
+            margin-inline-end: 12px;
+        }
+    }
+    
+    .more{
+        --background: transparent;
+        --border-color: #515151;
+        --border-style: solid;
+        --border-width: 2px;
+        --color: #252525;
+    }
+}
+
+.cont-product{
+    margin-block-start: 15px;
+}
+
+.product-info{
+    h1{
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 16px;
+        font-weight: bold;
+        margin: 0;
+    }
+
+    p{
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin: 0;
+        margin-block-start: 8px;
+        font-size: 16px;
+        color: #535353;
+    }
+
+    .product-price{
+        display: flex;
+        justify-content: flex-end;
+
+        h2{
+            display: flex;
+            justify-content: flex-end;
+            font-size: 18px;
+            font-weight: bold;
+            color: #E9610B;
+            margin: 0;
+        }
+    }
+}
+
+.product-buttons{
+    
+    inline-size: 100%;
+
+    ion-grid{
+        padding: 0;
+    }
+
+    ion-row{
+        padding: 0;
+    }
+
+    ion-col{
+        padding: 0;
+    }
+
+    ion-button{
+        inline-size: 180px;
+        font-size: 14px;
+        font-weight: bold;
+    }
+}
+
+.cont-atrib-t{
+    
+    ion-button{
+        inline-size: 40px;
+        block-size: 36px;
+        --border-radius: 10px;
+        --background: #F6F6F6;
+        --color: black;
+        font-weight: bold;
+        --box-shadow: #0000001f 0 1px 5px;
+        margin-inline-end: 6px;
+    }
+
+    ion-button.selected{
+        --background: var(--primary-color);
+        --color: white;
+    }
+}
+
+.sel-cant{
+
+    ion-button{
+        inline-size: 100%;
+        font-size: 14px;
+        block-size: 42px;
+        margin: auto;
+        --background: white;
+        --border-style: solid;
+        --border-width: 2px;
+        --border-color: #EFEFEF;
+        --box-shadow: black 0 0;
+        text-transform: none;
+        font-weight: normal;
+        white-space: nowrap;
+    }
+
+    ion-icon{
+        inset-inline-end: 0;
+        color: var(--primary-color);
+        inline-size: 20px;
+        block-size: 20px;
+        margin-inline-start: 9px;
+    }
+}
+
+.unit-list{
+    p{
+        margin: 0;
+        inline-size: 100%;
+        display: flex;
+        justify-content: center;
+    }
+}
+
+.cont-desc{
+    p{
+        font-size: 16px;
+        color: #535353;
+        text-align: justify;
+    }
+}
+
+.product-btn-cont{
+    position: relative;
+    inline-size: 100%;
+    inset-block-end: 0;
+    padding-inline: 15px;
+    display: flex;
+    block-size: 75px;
+}
+
+.cantN{
+    padding-inline: 15px;
+
+    h1{
+        font-size: 20px;
+        margin-bottom: 5px;
+    }
+
+    p{
+        color: #1a1a1a;
+        font-size: 14px;
+    }
+
+    ion-input{    
+        border-radius: 12px;
+        border-style: solid;
+        border-width: 2px;
+        border-color: #d7d7d7;
+        --padding-start: 15px;
+        --padding-end: 15px;
+        font-size: 16px;
+    }
+}
+
+.alert{
+    display: flex;
+    align-items: center;
+    color: red;
+    padding: 0;
+    margin-block-end: 0;
+
+    ion-icon{
+        inline-size: 18px;
+        block-size: 18px;
+        margin-inline-end: 5px;
+    }
+
+    p{
+        color: red;
+        margin: 0;
+        font-size: 15px;
+    }
+}

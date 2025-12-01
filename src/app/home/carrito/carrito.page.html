@@ -1,0 +1,215 @@
+<ion-header class="header-custom">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+
+      <ion-button color="white" style="font-weight: bold;" (click)="back()">
+        <ion-icon name="arrow-back-outline" size="large"></ion-icon>
+      </ion-button>
+
+    </ion-buttons>
+
+    <p class="toolbar-title">Mi Carrito</p>
+
+    <ion-buttons slot="end">
+
+      <ion-button color="white" style="font-weight: bold;" (click)="goStore()">
+        <ion-icon name="storefront-outline" size="large"></ion-icon>
+      </ion-button>
+
+    </ion-buttons>
+
+  </ion-toolbar>
+</ion-header>
+  
+  <ion-content class="ion-padding cart-content">
+    <main>
+      @if (!isLoading) {
+        <ion-list *ngIf="cartList.length > 0" class="cart-list">
+
+          <ion-item-sliding *ngFor="let cart of cartList; let i = index">
+
+            <ion-item button="true" class="cart-card">
+
+              <div class="cart-image">
+                <img src="{{ cart.imagen }}" alt="">
+              </div>
+              
+              <div class="cart-details">
+                <h1> {{ cart.nombre }} </h1>
+                <p>Elegido: <strong> {{  cart.atributo }} </strong> </p>
+
+                <div class="cart-mount">
+                  <p>${{ (cart.cantidad * (cart.comision + cart.precio)) | number:'1.2-2' }} MXN</p>
+                </div>
+              </div>
+
+              <div class="cart-buttons">
+              
+                <ion-button (click)="openCant(i)" class="open-cant">Cantidad: {{ cart.cantidad }} <ion-icon slot="end" name="chevron-forward-outline"></ion-icon> </ion-button>
+
+                <div class="cont-trash" (click)="removeCart(cart)">
+                  <ion-icon name="trash"></ion-icon>
+                </div>
+
+              </div>
+
+            </ion-item>
+
+            <ion-item-options slot="end">
+
+              <ion-item-option style="background: #CC3939; padding-left: 100%; block-size: 98%; border-radius: 20px;" expandable="true" (click)="removeCart(cart)">
+                <ion-icon slot="icon-only" name="trash"></ion-icon>
+              </ion-item-option>
+
+            </ion-item-options>
+
+          </ion-item-sliding>
+
+        </ion-list>
+
+        <ion-modal #cantModal trigger="open-cant" [initialBreakpoint]="0.4" [breakpoints]="[0, 0.4]" cssClass="modal-custom">
+    
+          <ng-template>
+
+            <ion-content>
+
+              <ion-list class="unit-list">
+
+                <ion-item (click)="selectCount(1)"><p>1 unidad</p></ion-item>
+                <ion-item (click)="selectCount(2)"><p>2 unidades</p></ion-item>
+                <ion-item (click)="selectCount(3)"><p>3 unidades</p></ion-item>
+                <ion-item (click)="selectCount(4)"><p>4 unidades</p></ion-item>
+                <ion-item (click)="selectCount(5)"><p>5 unidades</p></ion-item>
+                <ion-item (click)="selectCount(-1)"><p>Más de 5 unidades</p></ion-item>
+
+              </ion-list>
+
+            </ion-content>
+            
+          </ng-template>
+
+        </ion-modal>
+
+        <ion-modal #cantNModal trigger="open-cantN" [initialBreakpoint]="0.60" [breakpoints]="[0, 0.60]" cssClass="modal-custom">
+      
+          <ng-template>
+
+            <ion-content>
+
+              <ion-grid class="cantN">
+
+                <ion-row>
+                  <ion-col size="12"><h1>Ingresar cantidad</h1></ion-col>
+                </ion-row>
+
+                <ion-row>
+                  <ion-col size="12"><p>Disponible: X unidades</p></ion-col>
+                </ion-row>
+
+                <ion-row>
+                  <ion-col size="12"><ion-input mode="ios" type="number" [(ngModel)]="inputCount"></ion-input></ion-col>
+                </ion-row>
+
+                <ion-row class="alert" *ngIf="inputCount < 1"> <ion-icon name="alert-circle"></ion-icon> <p>Solo puedes comprar +1 unidades</p> </ion-row>
+
+                <ion-row class="buttons-cart">
+                  <ion-button [disabled]="(inputCount || 0) < 1" (click)="selectCount(inputCount)"> Confirmar </ion-button>
+                </ion-row>
+
+              </ion-grid>
+
+            </ion-content>
+            
+          </ng-template>
+
+        </ion-modal>
+
+      } @else{
+        
+        <ion-list class="cart-list">
+
+          <ion-item-sliding *ngFor="let i of [0,1,2,4]">
+
+            <ion-item button="true" class="cart-card">
+
+              <div class="cart-image">
+                <ion-skeleton-text [animated]="true" style="block-size: 90px; inline-size: 87px; margin: 0;"></ion-skeleton-text>
+              </div>
+              
+              <div class="cart-details" style="margin-block: 15px;">
+
+                <ion-skeleton-text [animated]="true" style="inline-size: 120px; block-size: 15px;"></ion-skeleton-text>
+                <ion-skeleton-text [animated]="true" style="inline-size: 80px; block-size: 15px; margin-block-start: 10px;"></ion-skeleton-text>
+
+                <div class="cart-mount">
+                  <ion-skeleton-text [animated]="true" style="inline-size: 100px; block-size: 18px; margin-block-start: 10px;"></ion-skeleton-text>
+                </div>
+              </div>
+
+              <div class="cart-buttons">
+                
+                <ion-button class="open-cant"> <ion-skeleton-text [animated]="true" style="inline-size: 65px; block-size: 14px;"></ion-skeleton-text> <ion-icon slot="end" name="chevron-forward-outline"></ion-icon> </ion-button>
+
+                <div class="cont-trash">
+                  <ion-icon name="trash"></ion-icon>
+                </div>
+
+              </div>
+
+            </ion-item>
+
+            <ion-item-options slot="end">
+
+              <ion-item-option style="background: #CC3939; padding-left: 100%; block-size: 98%; border-radius: 20px;" expandable="true">
+                <ion-icon slot="icon-only" name="trash"></ion-icon>
+              </ion-item-option>
+
+            </ion-item-options>
+
+          </ion-item-sliding>
+
+        </ion-list>
+      }
+
+      <ion-list class="payment-cont">
+
+        <div class="promo-code">
+          <ion-input mode="ios" placeholder="Ingrese código de cupón"></ion-input>
+          <ion-button>Aplicar</ion-button>
+        </div>
+
+        <ion-item >
+          <ion-grid class="payment-sub">
+            
+            <ion-row>
+              <p>Subtotal: </p>
+              <p class="price" *ngIf="!isLoading">${{ total | number:'1.2-2' }} MXN</p>
+              <ion-skeleton-text [animated]="true" style="inline-size: 110px; block-size: 20px; border-radius: 15px;" *ngIf="isLoading"></ion-skeleton-text>
+            </ion-row>
+
+            <ion-row>
+              <p>Descuento: </p>
+              <p class="price" *ngIf="!isLoading">${{ descuento | number:'1.2-2' }} MXN</p>
+              <ion-skeleton-text [animated]="true" style="inline-size: 80px; block-size: 20px; border-radius: 15px;" *ngIf="isLoading"></ion-skeleton-text>
+            </ion-row>
+
+          </ion-grid>
+        </ion-item>
+
+        <ion-grid class="payment-sub tot">
+            
+          <ion-row>
+            <p>Total</p>
+            <p class="price" *ngIf="!isLoading">${{ total | number:'1.2-2' }} MXN</p>
+            <ion-skeleton-text [animated]="true" style="inline-size: 150px; block-size: 20px; border-radius: 15px;" *ngIf="isLoading"></ion-skeleton-text>
+          </ion-row>
+
+        </ion-grid>
+
+        <ion-button class="pay-button" (click)="salesProduct()"> Continuar con la compra </ion-button>
+
+      </ion-list>
+
+    </main>
+  </ion-content>
+  

@@ -1,0 +1,554 @@
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { IonModal, ModalController, NavController } from '@ionic/angular';
+import { SweetAlertService } from 'src/services/sweet-alert.service';
+import { LocalStorageService } from 'src/services/UserDataService.service';
+import { CashlessService } from 'src/services/cashless.service';
+import { LottieService } from 'src/services/lottie.service';
+import { UserService } from 'src/services/user.service';
+import { TerminosPayProductComponent } from '../terminos/terminos.page';
+import { CatalogosService } from 'src/services/catalogos.service';
+import { firstValueFrom, Subscription } from 'rxjs';
+import { NativeBiometric, BiometryType } from "@capgo/capacitor-native-biometric";
+import { Capacitor } from '@capacitor/core';
+declare var OpenPay: any;
+
+@Component({
+  selector: 'app-detalle-compra',
+  templateUrl: './detalle-compra.component.html',
+  styleUrls: ['./detalle-compra.component.scss'],
+})
+export class DetalleCompraComponent  implements OnInit {
+  @ViewChild('buyModal') buyModal!: IonModal;
+  @Input() contentHtml: any; 
+  deviceDataId: any;
+  countryCode: string | undefined;
+  listCountries: any[] | undefined;
+  banderaCambioEstado = false;
+  listStates: { name: any; }[] | undefined;
+  me;
+
+  isValidName = true;
+  isValidEmail = true;
+  isValidTelefono = true;
+  isValidCalle = true;
+  isValidCountry = true;
+  isValidState = true;
+  isValidCity = true;
+  isValidColonia = true;
+  isValidCP = true;
+  isValidFechaNacimiento = true;
+
+  isValidNameTitular = true;
+  isValidTelefonoTitular = true;
+  isValidEmailTitular = true;
+  isValidConfirmarEmail = true;
+  isValidTarjeta = true;
+  isValidFV = true;
+  isValidCVV = true;
+  
+  userData: any = [
+    {
+      abonado: false,
+      calle: "",
+      ciudad: "Mérida",
+      country: "Mexico",
+      country_id: null,
+      colonia: "",
+      cp: "",
+      email: "",
+      fechaNacimiento: "",
+      id: 0,
+      invitado: 0,
+      mifel: false,
+      monedero: "",
+      name: "",
+      numero: "",
+      saldo_monedero: null,  
+      state: "Yucatán",
+      state_id: null,
+      telefono: "",
+
+      isValidNameTitular: '',
+      isValidTelefonoTitular: '',
+      isValidEmailTitular: '',
+      isValidConfirmarEmail: '',
+      isValidTarjeta: '',
+      isValidFV: '',
+      isValidCVV: ''
+    }
+  ];
+
+  optionsPay = [
+    { value: 'openpay', imageUrl: './assets/img/visa_mastercard.png', altText: 'Visa/MasterCard', name: 'Visa/MasterCard' },
+    { value: 'monedero', imageUrl: './assets/img/efectivo.png', altText: 'monedero', name: 'monedero' },
+  ];
+
+  metodoPago = {
+    "monedero": {
+        cbase: 0.0,
+        cimporte: 0,
+        cmeses: {
+            3: 0, // 4.8% de comisión para transacciones de 3 meses
+            6: 0, // 78% de comisión para transacciones de 6 meses
+            9: 0, // 108% de comisión para transacciones de 9 meses
+            12: 0, //13.8% de comisión para transacciones de 12 meses
+        }
+    },
+    "openpay": {
+        cbase: 0.029,
+        cimporte: 2.5,
+        cmeses: {
+            3: 0.048, // 4.8% de comisión para transacciones de 3 meses
+            6: 0.078, // 78% de comisión para transacciones de 6 meses
+            9: 0.0108, // 108% de comisión para transacciones de 9 meses
+            12: 0.0138, //13.8% de comisión para transacciones de 12 meses
+        }
+    },
+  };
+  sumCommision = 0;
+  desgloseComision: any;
+  totalComision = 0;
+  cargoBancario = 0;
+  totalCobrar = 0;
+  totalCobrarOrg = 0;
+
+  subtotalStr: number = 0;
+  totalCobrarStr: number = 0;
+
+  excludeComisionBancaria = 0;
+  exerpexcerptcb = 0;
+  subtotal: number = 0;
+  diablePay: boolean | undefined;
+
+  tarjeta: string = "";
+  cvv: string = "";
+  fv: string = "";
+
+  plan = 1;
+  tasaIVA = 16;
+
+  productPay:any = {
+    "metodo_pago": "monedero",
+    "origin": "productos",
+    "producto_id": 0,
+    "user_id": 0,
+    "productos": [
+      {
+        "idProducto": 0,
+        "cantidad": 0,
+        "iMSI": 0
+      }
+    ],
+    "cliente": {
+      "nombre": "",
+      "correo": "",
+      "telefono": "",
+      "tarjeta": {
+        "numero": "",
+        "exp_month": "",
+        "exp_year": "",
+        "cvv": ""
+      }
+    },
+  }
+
+  methodPay: string = "monedero";
+  products: any = [];
+  productSelect: any = [];
+  productCount: number = 0;
+  private subscription: Subscription = new Subscription();
+  
+
+  constructor(private navCtrl: NavController,
+    private localStorageService: LocalStorageService,
+    private router: ActivatedRoute,
+    private alertService: SweetAlertService,
+    private cashservice: CashlessService,
+    private lottieService: LottieService,
+    public userService: UserService,
+    private modalController: ModalController,
+    private catalogosService: CatalogosService,
+    private swal: SweetAlertService,
+    private loaderService: LottieService
+
+  ) { 
+    const userData = this.localStorageService.getItem('user_data')
+    this.me = JSON.parse(userData);
+
+    this.router.queryParams.subscribe(params => {
+      this.products = JSON.parse(params['products']);
+      console.log(this.products);
+
+      this.verifyAnyProduct();
+
+      this.subtotal = 0;
+      
+      this.products.forEach((product: any) => {
+        
+        console.log(`${product.precio} + ${product.count}`);
+
+        this.subtotal += ((product.precio + product.comision) * product.count)
+        this.subtotalStr = this.subtotal;
+      });
+      
+      console.log(this.products);
+    });
+  }
+
+  ngOnInit() {
+    this.getCountries();
+    const userData = this.localStorageService.getItem('user_data');
+    this.userData = JSON.parse(userData);
+    this.userData.nameTitular = this.userData.name;
+    this.userData.telefonoTitular = this.userData.telefono;
+    this.userData.emailTitular = this.userData.email;
+
+    this.addComisionConIVA(this.methodPay as keyof typeof this.metodoPago, 1, this.subtotal || 0);
+
+    setTimeout(() => {
+        // this.chanceCountry('MX');
+        
+        this.chanceCountry(this.me.country);
+
+        console.log("country: ", this.me.country, this.countryCode);
+    }, 2000);
+  }
+
+  addComisionConIVA(pasarela: keyof typeof this.metodoPago, meses: number, importe: number) {
+        
+
+    let item = this.metodoPago[pasarela];
+    let comision = item.cbase;
+    const exerpexcerptcb = this.exerpexcerptcb;
+    const importeComisioable = importe - exerpexcerptcb;
+
+    let totalPagar = importe;
+    let comisionConIVA = 0;
+
+    if (importeComisioable > 0) {
+        if ((item as any).cmeses && meses > 1 && (item as any).cmeses[meses] !== undefined) {
+            comision += (item as any).cmeses[meses];
+        }
+        
+
+        const IVA = 1 + this.tasaIVA / 100;
+        let resultado = importeComisioable * comision;
+        let resultadoRedondeafo = parseFloat(resultado.toFixed(2));
+        const numerador = IVA * (resultadoRedondeafo + item.cimporte);
+        // const denominador = 1 - (comision * IVA);
+        // comision = numerador / denominador;
+
+        // Redondeo la comisión con IVA a 2 decimales
+        comisionConIVA = numerador //Math.round(comision * 100) / 100;
+        totalPagar = importe + comisionConIVA;
+
+    }
+
+    //this.boleto.total = totalPagar;
+    this.desgloseComision = { comision: comisionConIVA, monto: importe };
+    this.cargoBancario = comisionConIVA;
+    this.totalCobrar = this.desgloseComision.comision + this.desgloseComision.monto;
+    this.totalCobrarStr = this.totalCobrar;
+
+    if(this.totalCobrar == 0){
+    this.diablePay = true;
+    }
+    return this.desgloseComision;
+  }
+
+  back(){
+    this.navCtrl.back();
+  }
+
+  verifyAnyProduct(){
+    this.productCount = 0;
+    this.products.forEach((item: any) => {
+      this.productCount += item.count;
+    });
+  }
+
+  toggleSelection() {
+
+    let result = this.addComisionConIVA(this.methodPay as keyof typeof this.metodoPago, 1, this.subtotal || 0);
+
+    this.cargoBancario = result.comision;
+    this.totalCobrar = result.comision + result.monto;
+    console.log(result);
+    if (this.subtotal == 0 || this.subtotal == undefined) {
+      this.diablePay = true;
+    }
+  }
+
+  openBuyModal(){
+
+    this.isValidName = String(this.userData.name || "").trim().length > 0;
+    this.isValidEmail = String(this.userData.email || "").trim().length > 0;
+    this.isValidTelefono = String(this.userData.telefono || "").trim().length > 0;
+    this.isValidCalle = String(this.userData.calle || "").trim().length > 0;
+    this.isValidCountry = String(this.userData.country || "").trim().length > 0;
+    this.isValidState = String(this.userData.state || "").trim().length > 0;
+    this.isValidCity = String(this.userData.city || "").trim().length > 0;
+    this.isValidColonia = String(this.userData.colonia || "").trim().length > 0;
+    this.isValidCP = String(this.userData.cp || "").trim().length > 0;
+    this.isValidFechaNacimiento = String(this.userData.fechaNacimiento || "").trim().length > 0;
+
+    let isValidOP = true;
+
+    if(this.methodPay == 'openpay'){
+      this.isValidNameTitular = String(this.userData.nameTitular || "").trim().length > 0;
+      this.isValidTelefonoTitular = String(this.userData.telefonoTitular || "").trim().length > 0;
+      this.isValidEmailTitular = String(this.userData.emailTitular || "").trim().length > 0;
+      this.isValidConfirmarEmail = String(this.userData.confirmarEmail || "").trim().length > 0 && (this.userData.confirmarEmail == this.userData.emailTitular);
+      this.isValidTarjeta = String(this.tarjeta || "").trim().length > 11;
+      this.isValidFV = String(this.fv || "").trim().length > 0;
+      this.isValidCVV = String(this.cvv || "").trim().length > 2;
+
+      isValidOP = this.isValidNameTitular &&
+      this.isValidTelefonoTitular &&
+      this.isValidEmailTitular &&
+      this.isValidConfirmarEmail &&
+      this.isValidTarjeta &&
+      this.isValidFV &&
+      this.isValidCVV;
+    }
+
+    const allValid =
+    this.isValidName &&
+    this.isValidEmail &&
+    this.isValidTelefono &&
+    this.isValidCalle &&
+    this.isValidCountry &&
+    this.isValidState &&
+    this.isValidCity &&
+    this.isValidColonia &&
+    this.isValidCP &&
+    this.isValidFechaNacimiento;
+
+    if(allValid && isValidOP){
+      this.buyModal.present();
+    }
+  }
+
+  closeBuyModal(){
+    this.buyModal.dismiss();
+  }
+
+  formatVal() {
+    
+    let v = this.fv.replace(/\D/g, '');
+
+    if (v.length > 4) v = v.slice(0, 4);
+
+    if (v.length > 2) {
+      v = (Number(v.slice(0, 2)) > 12) ? '12' : v;
+      v = v.slice(0, 2) + '/' + v.slice(2);
+    }
+
+    this.fv = v;
+  }
+
+  async saleProduct(){
+    this.closeBuyModal();
+
+    this.loaderService.showLoader();
+    const productsL: any = [];
+    //Verifica si el cliente se encuentra antes de hacer la compra
+    for (const product of this.products) {
+
+      const r = await firstValueFrom(this.cashservice.getProductoFiltro(product.nombre));
+
+      let count = product.count;
+
+      const prod = {
+        "idProducto": r.data[0].id,
+        "cantidad": count,
+        "iMSI": 0
+      };
+
+      productsL.push(prod);
+
+    };
+
+    if(productsL.length > 0){ 
+
+      if(this.methodPay == "openpay"){
+
+        this.deviceDataId = OpenPay.deviceData.setup("processCard");
+        const fvD = this.fv.split("/");
+
+        const formObject = {
+            card_number: this.tarjeta,
+            holder_name: this.userData.name,
+            expiration_year: fvD[1],
+            expiration_month: fvD[0],
+            cvv2: this.cvv,
+            address: {
+              city: this.userData.city,
+              line3: '.',
+              postal_code: "123",
+              line1: "123",
+              line2: "123",
+              state: "123",
+              country_code: this.countryCode,
+            }
+        };
+
+        this.productPay = {
+          "metodo_pago": this.methodPay,
+          "origin": "productos",
+          "user_id": this.userData.id,
+          "productos": productsL,
+          "cliente": {
+            "nombre": this.userData.name,
+            "correo": this.userData.email,
+            "telefono": this.userData.telefono,
+            "tarjeta": {
+              "numero": this.tarjeta,
+              "exp_month": fvD[0],
+              "exp_year": fvD[1],
+              "cvv": this.cvv
+            }
+          },
+          "formObject": formObject,
+          "device_session_id": this.deviceDataId,
+          "subtotal": this.subtotalStr,
+          "comision": this.cargoBancario,
+          "total": this.totalCobrarStr,
+        }
+
+        console.log(this.productPay);
+        this.loaderService.hideLoader();
+
+        const modal = await this.modalController.create({
+          component: TerminosPayProductComponent,
+          componentProps: {
+            contentHtml: this.productPay
+          }
+        });
+
+        await modal.present();
+        modal.onDidDismiss().then((data) => {
+
+        });
+
+      }else{
+        
+        try {
+          // Verifica si hay biometría disponible
+          if(Capacitor.getPlatform() !== 'web'){
+            const result = await NativeBiometric.isAvailable();
+
+            if (!result.isAvailable) {
+              console.log("Biometría no disponible");
+              return;
+            }
+
+            // Abrir el diálogo de huella/FaceID
+            await NativeBiometric.verifyIdentity({
+              reason: "Verificación de huella",
+              title: "Autenticación",
+              subtitle: "Coloca tu huella",
+              description: "Verificando identidad",
+            });
+
+          } 
+          this.productPay = {
+          "metodo_pago": this.methodPay,
+          "origin": "productos",
+          "user_id": this.userData.id,
+          "productos": productsL,
+          "cliente": {
+            "nombre": this.userData.name,
+            "correo": this.userData.email,
+            "telefono": this.userData.telefono,
+          },
+          "device_session_id": this.deviceDataId,
+          "subtotal": this.subtotalStr,
+          "comision": this.cargoBancario,
+          "total": this.totalCobrarStr,
+        }
+        
+        this.cashservice.saleProduct(this.productPay).subscribe({
+              
+          next: (rest: any) => {
+            
+            this.alertService.success("Compra realiza con éxito");
+            this.lottieService.hideLoader();
+          },
+          error: (err)  => {
+            this.alertService.error(err.error.error);
+            this.lottieService.hideLoader();
+          }
+
+        });
+
+        } catch (error) {
+          this.alertService.error("Hubo un error al obtener la autenticación", "La huella dactilar o FaceID no coincidieron correctamente, intente nuevamente.");
+          this.lottieService.hideLoader();
+        }
+
+      }
+
+    }
+
+  }
+
+  chanceCountry(eventOrCountry: Event | { target: { value: string } } | string): void {
+    let id;
+    let code;
+
+    if ((eventOrCountry as { target: { value: string } }).target) {
+        const target = (eventOrCountry as { target: { value: string } }).target;
+        const selectedCountry = target.value;
+
+        const selectedcountry = this.listCountries?.find((country: { name: any }) => {
+            return country.name === selectedCountry;
+        });
+
+        if (selectedcountry) {
+            id = selectedcountry.id;
+            code = selectedcountry.code;
+            this.countryCode = code;
+
+            const selectedId = this.listCountries?.find((country: { id: any }) => country.id === this.me.country_id);
+            this.banderaCambioEstado = true;
+
+            if (selectedId) {
+                this.countryCode = selectedId;
+            }
+        }
+    } else {
+        if (this.me.country == undefined || !this.me.country) {
+            id = '142';
+            this.countryCode = "MX";
+        } else {
+            const selectedCountry = this.listCountries?.find((country: { name: any }) => country.name === this.me.country);
+            if (selectedCountry) {
+                this.countryCode = selectedCountry.code;
+                id = selectedCountry.id;
+            }
+        }
+    }
+
+    this.subscription.add(
+        this.catalogosService.getStates(id).subscribe((c: any) => {
+            this.listStates = c;
+        }, (error: string | undefined) => {
+            this.swal.error(error);
+        })
+    );
+  }
+
+  getCountries() {
+    this.subscription.add(
+        this.catalogosService.getCountries().subscribe(c => {
+            this.listCountries = c;
+        }, error => { this.alertService.error(error); })
+    )
+  }
+
+  goCart(){
+    this.navCtrl.navigateRoot('user/shop/leones/carrito');
+  }
+}

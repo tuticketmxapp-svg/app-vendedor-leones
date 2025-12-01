@@ -1,0 +1,253 @@
+<app-menu></app-menu>
+
+<ion-header class="header-custom">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+
+      <ion-button color="white" style="font-weight: bold;" (click)="back()">
+        <ion-icon name="arrow-back-outline" size="large"></ion-icon>
+      </ion-button>
+
+    </ion-buttons>
+
+    <p class="toolbar-title">Detalles</p>
+
+    <ion-buttons slot="end">
+
+      <ion-button color="white" style="font-weight: bold;" (click)="goCart()">
+        <ion-icon name="cart-outline" size="large"></ion-icon>
+        
+      </ion-button>
+
+      <ion-badge color="danger">{{ userService.cartCount || 0 }}</ion-badge>
+
+    </ion-buttons>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content id="main-content"  class="ion-padding">
+
+  <main class="main" *ngIf="isFound">
+  
+    <div class="product-banner">
+
+      <ion-skeleton-text [animated]="true" style="inline-size: 100%; block-size: 340px; position: absolute; border-radius: 0;" *ngIf="isLoading"></ion-skeleton-text>
+
+      <div class="btn-share">
+        <ion-button style="inset-inline-start: 0;"><ion-icon name="heart-outline"></ion-icon></ion-button>
+      </div>
+      
+      <div class="btn-share">
+        <ion-button><ion-icon name="share-social-outline"></ion-icon></ion-button>
+      </div>
+
+      <div class="product-cont">
+        <img src="{{ productInfo.imagen }}" alt="{{ productInfo.nombre }}" style="block-size: 265px; inline-size: 100%;" *ngIf="!isLoading">
+      </div>
+
+    </div>
+  
+    <!-- Nombre, categorias y precios -->
+    <div class="cont-product">
+      <ion-grid>
+
+        <ion-row class="product-info">
+
+          <ion-col size="7">
+            <ion-row> <h1 *ngIf="!isLoading">{{ productInfo.nombre }}</h1> <ion-skeleton-text *ngIf="isLoading" [animated]="true" style="inline-size: 100%; block-size: 15px;"></ion-skeleton-text> </ion-row>
+            <ion-row> <p *ngIf="!isLoading">{{ productInfo.categoria }}</p> <ion-skeleton-text *ngIf="isLoading" [animated]="true" style="inline-size: 80%; block-size: 15px; margin-block-start: 15px;"></ion-skeleton-text>  </ion-row>
+
+          </ion-col>
+
+          <ion-col size="5"><ion-row class="product-price"> <h2 *ngIf="!isLoading">${{ (productInfo.precio + productInfo.comision ) | number:'1.2-2' }} MXN</h2> <ion-skeleton-text *ngIf="isLoading" [animated]="true" style="inline-size: 100%; block-size: 20px;"></ion-skeleton-text> </ion-row></ion-col>
+
+        </ion-row>
+
+        <ion-row>
+          <!-- <qrcode [qrdata]="qrData" [width]="256" [errorCorrectionLevel]="'M'"></qrcode> -->
+        </ion-row>
+
+      </ion-grid>
+    </div>
+  
+    <!-- Contadores de tallas -->
+
+    <div class="cont-atrib">
+      <ion-grid>
+
+        <ion-row class="product-info">
+
+          <ion-col size="12">
+            <ion-row><h1>Selecciona tu talla</h1></ion-row>
+          </ion-col>
+
+        </ion-row>
+
+        <ion-row class="cont-atrib-t">
+
+          <ion-col size="7">
+            <ion-button *ngFor="let atributo of (!isLoading ? atributosList : []); let i = index" [ngClass]="atributo.isSelected ? 'selected' : ''" (click)="selectAttribute(i)">{{ atributo.name }}</ion-button>
+            <ion-button *ngFor="let item of (isLoading ? [0,1,2] : [])" [ngClass]="item == 0 ? 'selected' : ''"><ion-skeleton-text [animated]="true" style="inline-size: 100%; block-size: 15px;"></ion-skeleton-text></ion-button>
+          </ion-col>
+
+          <ion-col size="5" class="sel-cant">
+            <ion-button id="open-cant">Cantidad: {{ productCount }} <ion-icon slot="end" name="chevron-forward-outline"></ion-icon> </ion-button>
+          </ion-col>
+
+        </ion-row>
+
+      </ion-grid>
+
+      <ion-modal #cantModal trigger="open-cant" [initialBreakpoint]="0.4" [breakpoints]="[0, 0.4]" cssClass="modal-custom">
+    
+        <ng-template>
+
+          <ion-content>
+
+            <ion-list class="unit-list">
+
+              <ion-item (click)="selectCount(1)"><p>1 unidad</p></ion-item>
+              <ion-item (click)="selectCount(2)"><p>2 unidades</p></ion-item>
+              <ion-item (click)="selectCount(3)"><p>3 unidades</p></ion-item>
+              <ion-item (click)="selectCount(4)"><p>4 unidades</p></ion-item>
+              <ion-item (click)="selectCount(5)"><p>5 unidades</p></ion-item>
+              <ion-item (click)="selectCount(-1)"><p>Más de 5 unidades</p></ion-item>
+
+            </ion-list>
+
+          </ion-content>
+          
+        </ng-template>
+
+      </ion-modal>
+
+      <ion-modal #cantNModal trigger="open-cantN" [initialBreakpoint]="0.60" [breakpoints]="[0, 0.60]" cssClass="modal-custom">
+    
+        <ng-template>
+
+          <ion-content>
+
+            <ion-grid class="cantN">
+
+              <ion-row>
+                <ion-col size="12"><h1>Ingresar cantidad</h1></ion-col>
+              </ion-row>
+
+              <ion-row>
+                <ion-col size="12"><p>Disponible: {{ productInfo.stock }} unidades</p></ion-col>
+              </ion-row>
+
+              <ion-row>
+                <ion-col size="12"><ion-input mode="ios" type="number" [(ngModel)]="inputCount"></ion-input></ion-col>
+              </ion-row>
+
+              <ion-row class="alert" *ngIf="inputCount < 1"> <ion-icon name="alert-circle"></ion-icon> <p>Solo puedes comprar +1 unidades</p> </ion-row>
+              <ion-row class="alert" *ngIf="inputCount > productInfo.stock"> <ion-icon name="alert-circle"></ion-icon> <p>La cantidad supera la disponibilidad</p> </ion-row>
+
+              <ion-row class="buttons-cart">
+                <ion-button [disabled]="(inputCount || 0) < 1 || (inputCount || 0) > productInfo.stock" (click)="selectCount(inputCount)"> Confirmar </ion-button>
+              </ion-row>
+
+            </ion-grid>
+
+          </ion-content>
+          
+        </ng-template>
+
+      </ion-modal>
+    </div>
+
+    <!-- Descripción del producto -->
+
+    <div class="cont-desc">
+      <ion-grid>
+
+        <ion-row class="product-info">
+
+          <ion-col size="12">
+            <ion-row><h1>Descripción</h1></ion-row>
+          </ion-col>
+
+        </ion-row>
+
+        <ion-row>
+
+          <ion-col size="12">
+            <p *ngIf="!isLoading"> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nost… </p> 
+            <ion-skeleton-text *ngFor="let item of (isLoading ? [0,1,2,3] : [])" [animated]="true" style="inline-size: 100%; block-size: 15px; margin-block-end: 10px;"></ion-skeleton-text>
+            <ion-skeleton-text *ngIf="isLoading" [animated]="true" style="inline-size: 70%; block-size: 15px;"></ion-skeleton-text>
+          </ion-col>
+
+        </ion-row>
+
+      </ion-grid>
+    </div>
+
+  </main>
+
+  <div *ngIf="!isFound" class="no-product-cont">
+
+    <img src="assets/img/NotFound2.svg" alt="" class="no-product-img">
+    <p>Lo sentimos, el producto que buscas no está disponible.</p>
+
+  </div>
+
+</ion-content>
+
+<div class="product-btn-cont" *ngIf="isFound">
+  <!-- Botones de compra -->
+  <div class="product-buttons">
+
+    <ion-grid>
+
+      <ion-row class="buttons-cart">
+
+        <ion-col size="6">
+          <ion-button class="more" id="open-cart" (click)="addToCart()" expand="line"> <ion-icon name="cart-outline" style="margin-inline-end: 3px;"></ion-icon> Añadir a carrito</ion-button>
+        </ion-col>
+
+        <ion-col size="6" style="display: flex; justify-content: flex-end;">
+          <ion-button (click)="onSelectProduct()"> <ion-icon name="storefront-outline"></ion-icon> Comprar </ion-button>
+        </ion-col>
+
+      </ion-row>
+
+    </ion-grid>
+  
+    <ion-modal #cartModal trigger="open-cart" [initialBreakpoint]="0.23" [breakpoints]="[0, 0.23]" style="--backdrop-opacity: 2.8;" cssClass="modal-custom">
+
+      <ng-template>
+
+        <ion-content>
+
+          <ion-grid style="margin-block-start: 10px;">
+
+            <ion-item>
+              <div class="product-img-tar"><img src="{{ productInfo.imagen }}" alt=""></div>
+
+              <div class="product-det-tar">
+                <h1>Agregaste a tu carrito</h1>
+                <p> {{ productInfo.nombre }} </p>
+                <p> {{ productCount < 1 ? 1 : productCount }} unidad(es)</p>
+              </div>
+            </ion-item>
+
+            <ion-row class="buttons-cart">
+
+              <ion-col size="6"><ion-button class="more" (click)="goStore()"> <ion-icon name="storefront-outline"></ion-icon> Ver Más...</ion-button></ion-col>
+              <ion-col size="6"><ion-button (click)="goCart()"> <ion-icon name="cart-outline"></ion-icon> Ir Al Carrito</ion-button></ion-col>
+
+            </ion-row>
+
+          </ion-grid>
+
+        </ion-content>
+        
+      </ng-template>
+
+    </ion-modal>
+    
+  </div>
+  
+</div>

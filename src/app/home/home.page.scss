@@ -1,27 +1,165 @@
-#container {
-  text-align: center;
-
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+.tipografia {
+    font-family: "Barlow-Semibold", sans-serif, ;
 }
 
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
+:host{
+    background: linear-gradient(70deg, #e1e1e1 -20%, #ffffff 50%);
 }
 
-#container p {
-  font-size: 16px;
-  line-height: 22px;
-
-  color: #8c8c8c;
-
-  margin: 0;
+ion-content{
+    --background: transparent !important;
 }
 
-#container a {
-  text-decoration: none;
+.title-shop{
+    font-size: 40px;
+}
+
+ion-content{
+    --background: var(--background-color);
+    color: var(--secondary-color);
+    
+}
+
+$primary-color: var(--primary-color);
+
+
+/* Diseño de pestaña */
+
+ion-segment ion-label{
+    font-size: 20px;
+    font-family: "Barlow-Semibold";
+    letter-spacing: 0;
+    color: var(--secondary-color);
+}
+
+ion-segment-button {
+    --ion-color-base: var(--primary-color);
+    min-height: 43px;
+}
+
+/* Diseño para la sección de banners */
+
+.animation-c{
+    transition: 0.5s;
+    position: relative;
+    display: flex;
+    justify-content: center;
+}
+
+#banner{
+    overflow-y: hidden;
+}
+
+.banner-content{
+    block-size: 280px;
+}
+
+.categories-content{
+    block-size: 180px;
+}
+
+.banner-img-cont{
+    block-size: 175px;
+    inline-size: 100%;
+    background-color: gray;
+}
+
+.img-logoL{
+    inline-size: 135px;
+    position: absolute;
+    inset-block-start: 115px;
+}
+
+/* Diseño para la sección de categorías */
+
+.scroll-x{
+    overflow-x: auto;        
+    -webkit-overflow-scrolling: touch;
+    padding: 0 10px;
+    gap: 30px;  
+}
+
+.categories-card {
+    min-inline-size: 122px;
+    opacity: 1;
+    transition: 0.3s;
+    color: black;
+}
+
+.categories-card.no-select{
+    opacity: 0.5;
+}
+
+.categories-card img{
+    background: var(--primary-color-50);
+    inline-size: 122px;
+    block-size: 122px; 
+    object-fit: cover;
+    transition: 0.3s;
+}
+
+.categories-card.select img{
+  background: var(--primary-color-75);
+}
+
+.categories-card.select{
+    color: var(--secondary-color);
+}
+
+.product-card{
+    inline-size: 175px;
+    //block-size: 233px;
+    background: transparent;
+    margin-block-start: 10px;
+}
+
+.product-card h5{
+    font-size: 13px;
+}
+
+.product-card p{
+    font-size: 15px;
+}
+
+.product-img-card{
+    block-size: 180px;
+    object-fit: cover;
+    background: white;
+    box-shadow: rgba(0, 0, 0, 0.0901960784) 0 0 8px 3px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img{
+        inline-size: 90%;
+    }
+}
+
+/* Sección donde no hay producto */
+
+.no-product-cont{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    block-size: 40vh;
+    padding: 20px;
+}
+
+.no-product-cont p{
+    color: #A1A1A1;
+    font-size: 18px;
+    text-align: center;
+}
+
+.no-product-img{
+    inline-size: 18vh;
+}
+
+.sbtitle-p{
+    margin-inline-start: 10px;
+    margin-block-start: 10px;
+    color: var(--primary-color);
+    font-size: 17px;
 }

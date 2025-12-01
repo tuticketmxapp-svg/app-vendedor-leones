@@ -6,7 +6,12 @@ const routes: Routes = [
   {
     path: '',
     component: HomePage,
-  }
+
+  },
+  {
+    path: 'producto',
+    loadChildren: () => import('./detalle-producto/detalle-producto.module').then((m) => m.DetalleProductoModule),
+  },
 ];
 
 @NgModule({
