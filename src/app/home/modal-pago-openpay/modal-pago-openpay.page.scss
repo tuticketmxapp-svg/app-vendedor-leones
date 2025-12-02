@@ -1,0 +1,29 @@
+.form {
+    h1 {
+        font-family: "Segoe-Bold";
+        font-size: 34px;
+        color: #111827;
+    }
+
+    label {
+        font-family: "Segoe-Bold";
+        font-size: 16px;
+        color: #9CA3AF;
+    }
+}
+
+.modal-header {
+    h1 {
+        font-family: "Segoe-Bold";
+        font-size: 34px;
+        color: #111827;
+    }
+}
+.iframe-container {
+    height: 544px;
+  }
+  iframe {
+    display: block;
+    width: 100%;
+    height: 90%;
+  }

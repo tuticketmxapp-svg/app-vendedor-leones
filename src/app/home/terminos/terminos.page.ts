@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalPagoOpenPayComponent } from 'src/app/boletos/evento/venta/modal-pago-openpay/modal-pago-openpay.page';
-import { ModalPagoComponent } from 'src/app/boletos/evento/venta/modal-pago/modal-pago.page';
+import { ModalPagoOpenPayComponent } from 'src/app/home/modal-pago-openpay/modal-pago-openpay.page';
 import { EventoService } from 'src/services/evento.service';
 import { PaymentService } from 'src/services/payment.service';
 import { SweetAlertService } from 'src/services/sweet-alert.service';
@@ -11,14 +10,18 @@ import { LottieService } from 'src/services/lottie.service';
 import { IonicModule, ModalController } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { CashlessService } from 'src/services/cashless.service';
+import { SharedModule } from 'src/app/shared.module';
 
 declare var OpenPay: any;
 @Component({
   selector: 'app-terminosPay',
-  standalone: true,
   templateUrl: './terminos.page.html',
   styleUrls: ['./terminos.page.scss'],
-  imports: [IonicModule, CommonModule] 
+  standalone: true,
+  imports: [
+    IonicModule,
+    CommonModule,
+  ],
 })
 export class TerminosPayProductComponent implements OnInit {
   contentHtml:any;

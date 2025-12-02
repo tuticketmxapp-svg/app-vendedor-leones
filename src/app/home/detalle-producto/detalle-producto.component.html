@@ -79,14 +79,14 @@
         <ion-row class="product-info">
 
           <ion-col size="12">
-            <ion-row><h1>Selecciona tu talla</h1></ion-row>
+            <ion-row><h1> {{ (productInfo.atributos?.length < 1) ? 'Selecciona la cantidad' : 'Selecciona tu talla' }} </h1></ion-row>
           </ion-col>
 
         </ion-row>
 
         <ion-row class="cont-atrib-t">
 
-          <ion-col size="7">
+          <ion-col size="7" *ngIf="productInfo.atributos?.length > 0 || isLoading">
             <ion-button *ngFor="let atributo of (!isLoading ? atributosList : []); let i = index" [ngClass]="atributo.isSelected ? 'selected' : ''" (click)="selectAttribute(i)">{{ atributo.name }}</ion-button>
             <ion-button *ngFor="let item of (isLoading ? [0,1,2] : [])" [ngClass]="item == 0 ? 'selected' : ''"><ion-skeleton-text [animated]="true" style="inline-size: 100%; block-size: 15px;"></ion-skeleton-text></ion-button>
           </ion-col>

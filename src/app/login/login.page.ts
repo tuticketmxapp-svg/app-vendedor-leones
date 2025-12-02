@@ -14,6 +14,7 @@ import { LottieService } from 'src/services/lottie.service';
 import { LocalStorageService } from 'src/services/UserDataService.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ModalController } from '@ionic/angular';
+import { CookieService } from 'ngx-cookie-service';
 
 interface Country {
   id: number;
@@ -93,7 +94,8 @@ export class LoginPage implements OnInit, OnDestroy {
     private route: Router,
     private userDataService: LocalStorageService,
     private fb: FormBuilder,
-    private modalController: ModalController
+    private modalController: ModalController,
+    private cookie: CookieService,
   ) {
     this.formulario = this.fb.group(
       {
@@ -134,7 +136,7 @@ export class LoginPage implements OnInit, OnDestroy {
     }
 
     const data = {
-      usuario: this.userLogin.email,   //  campo que espera tu backend
+      usuario: this.userLogin.email,   //  campo que espera backend
       password: this.userLogin.password,
     };
 
@@ -147,12 +149,17 @@ export class LoginPage implements OnInit, OnDestroy {
           console.log('Respuesta loginVendor:', resp);
 
           if (resp?.status === 'success') {
-            const vendedor = resp.data?.vendedor ?? null;
+            const vendedor = resp.data?.usuario ?? null;
 
             if (vendedor) {
               // guarda info del vendedor
               this.userDataService.setUserData(vendedor);
               localStorage.setItem('user_data', JSON.stringify(vendedor));
+
+              localStorage.setItem('user_id', vendedor.id);
+              localStorage.setItem('token', resp.data?.token);
+              localStorage.setItem("access_token", resp.data?.token);
+              this.cookie.set('access_token', resp.data?.token, 2, '/');
             }
 
             this.loggedIn.emit(true);

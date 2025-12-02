@@ -20,8 +20,7 @@ import { NativeBiometric, BiometryType } from "@capgo/capacitor-native-biometric
     IonicModule,
     SharedModule,
     CommonModule,
-    FormsModule,
-    SharedModule
+    FormsModule
   ],
 })
 export class DetalleProductoComponent  implements OnInit {
@@ -147,8 +146,6 @@ export class DetalleProductoComponent  implements OnInit {
         return;
       }
 
-      this.productInfo.atributos = this.productInfo.atributos.length < 1 ? ["N"] : this.productInfo.atributos;  
-
       //Obtiene los atributos y los pone a una lista
       const atributes = this.productInfo.atributos;
 
@@ -162,6 +159,11 @@ export class DetalleProductoComponent  implements OnInit {
         this.atributosList.push(atributoObject);
       });
 
+      this.loaderService.hideLoader();
+      this.isLoading = false;
+      this.selectAttribute(0);
+
+      /*
       this.cashlessService.getCart().subscribe((r2: any) => {
         
         this.cartList = r2.items.filter((cart: any) => cart.product_id == this.productInfo.id);
@@ -169,7 +171,7 @@ export class DetalleProductoComponent  implements OnInit {
         this.isLoading = false;
         this.selectAttribute(0);
 
-      });
+      });*/
 
     });
   }
@@ -205,18 +207,24 @@ export class DetalleProductoComponent  implements OnInit {
 
   selectAttribute(index: number){
 
-    this.atributosList.forEach((atributos: any) => {
-      atributos.isSelected = false;
-    });
+    console.log('list', this.atributosList);
 
-    this.atributosList[index].isSelected = true;
-    this.attributeSelect = this.atributosList[index].name;
-    this.atributosList.count = this.productCount;
+    if(this.atributosList.length > 0){
 
-    const cart = this.cartList.find((cart: any) => cart.atributo == this.attributeSelect);
-    this.prevProductCount = cart?.cantidad || 0;
-    console.log(this.prevProductCount)
+      this.atributosList.forEach((atributos: any) => {
+        atributos.isSelected = false;
+      });
 
+      this.atributosList[index].isSelected = true;
+      this.attributeSelect = this.atributosList[index].name;
+      this.atributosList.count = this.productCount;
+
+      const cart = this.cartList.find((cart: any) => cart.atributo == this.attributeSelect);
+      this.prevProductCount = cart?.cantidad || 0;
+
+    }else{
+      this.attributeSelect = "Único"
+    }
   }
 
   onSelectProduct(){
@@ -232,12 +240,12 @@ export class DetalleProductoComponent  implements OnInit {
       nombre: this.productInfo.nombre,
       precio: this.productInfo.precio,
       comision: this.productInfo.comision,
-      atributo: this.attributeSelect,
+      atributo: this.attributeSelect || 'Unico',
       count: this.productCount,
     });
 
 
-    this.navCtrl.navigateForward(['/user/detalleCompra'], {
+    this.navCtrl.navigateForward(['home/detalleCompra'], {
       queryParams: { products: JSON.stringify(products) },
       state: { from: '/' }
     });

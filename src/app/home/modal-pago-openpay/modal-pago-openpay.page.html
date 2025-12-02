@@ -1,0 +1,23 @@
+<ion-header>
+    <ion-toolbar>
+      <ion-title class="ion-text-center"></ion-title>
+      <ion-buttons slot="end">
+        <ion-button (click)="closeModal()">
+          <ion-icon name="close-outline"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
+  
+  <ion-content>
+    <div class="iframe-container">
+      <iframe 
+        [src]="urlOpenpay" 
+        width="100%" 
+        height="90%" 
+        frameborder="0" 
+        id="iframe">
+      </iframe>
+    </div>
+  </ion-content>
+  

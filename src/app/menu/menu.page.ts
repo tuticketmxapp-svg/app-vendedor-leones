@@ -99,7 +99,7 @@ export class MenuComponent implements OnInit, OnDestroy {
     localStorage.removeItem('access_token');
     localStorage.removeItem('user_id');
     localStorage.removeItem('user_data');
-    this.router.navigate(['/'], { replaceUrl: true });
+    this.router.navigate(['/login'], { replaceUrl: true });
   }
 
   ngOnDestroy(): void {

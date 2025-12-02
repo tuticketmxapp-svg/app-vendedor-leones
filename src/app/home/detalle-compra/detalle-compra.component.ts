@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { IonModal, ModalController, NavController } from '@ionic/angular';
+import { IonicModule, IonModal, ModalController, NavController } from '@ionic/angular';
 import { SweetAlertService } from 'src/services/sweet-alert.service';
 import { LocalStorageService } from 'src/services/UserDataService.service';
 import { CashlessService } from 'src/services/cashless.service';
@@ -11,12 +11,22 @@ import { CatalogosService } from 'src/services/catalogos.service';
 import { firstValueFrom, Subscription } from 'rxjs';
 import { NativeBiometric, BiometryType } from "@capgo/capacitor-native-biometric";
 import { Capacitor } from '@capacitor/core';
+import { SharedModule } from 'src/app/shared.module';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 declare var OpenPay: any;
 
 @Component({
   selector: 'app-detalle-compra',
   templateUrl: './detalle-compra.component.html',
   styleUrls: ['./detalle-compra.component.scss'],
+  standalone: true,
+  imports: [
+    IonicModule,
+    SharedModule,
+    CommonModule,
+    FormsModule,
+  ],
 })
 export class DetalleCompraComponent  implements OnInit {
   @ViewChild('buyModal') buyModal!: IonModal;
@@ -173,7 +183,7 @@ export class DetalleCompraComponent  implements OnInit {
     private loaderService: LottieService
 
   ) { 
-    const userData = this.localStorageService.getItem('user_data')
+    const userData: any = this.localStorageService.getItem('user_data')
     this.me = JSON.parse(userData);
 
     this.router.queryParams.subscribe(params => {
@@ -198,7 +208,7 @@ export class DetalleCompraComponent  implements OnInit {
 
   ngOnInit() {
     this.getCountries();
-    const userData = this.localStorageService.getItem('user_data');
+    const userData: any = this.localStorageService.getItem('user_data');
     this.userData = JSON.parse(userData);
     this.userData.nameTitular = this.userData.name;
     this.userData.telefonoTitular = this.userData.telefono;

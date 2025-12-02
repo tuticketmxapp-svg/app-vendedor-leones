@@ -4,14 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 
 import { Routes, RouterModule } from '@angular/router';
-import { DetalleProductoComponent } from './detalle-producto.component';
+import { DetalleCompraComponent } from './detalle-compra.component';
 import { AuthGuard } from 'src/app/auth.guard';
 
 const routes: Routes = [
   {
     path: '',
-    component: DetalleProductoComponent,
-    
+    component: DetalleCompraComponent,
   }
 ];
 
@@ -23,4 +22,4 @@ const routes: Routes = [
     RouterModule.forChild(routes)
   ],
 })
-export class DetalleProductoModule {}
+export class DetalleCompraModule {}
