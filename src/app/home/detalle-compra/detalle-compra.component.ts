@@ -559,6 +559,6 @@ export class DetalleCompraComponent  implements OnInit {
   }
 
   goCart(){
-    this.navCtrl.navigateRoot('user/shop/leones/carrito');
+    this.navCtrl.navigateRoot('home/carrito');
   }
 }

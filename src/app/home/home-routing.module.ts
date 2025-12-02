@@ -18,6 +18,11 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     loadChildren: () => import('./detalle-compra/detalle-compra.module').then((m) => m.DetalleCompraModule),
   },
+  {
+    path: 'carrito',
+    canActivate: [AuthGuard],
+    loadChildren: () => import('./carrito/carrito.module').then((m) => m.CarritoModule),
+  },
 ];
 
 @NgModule({

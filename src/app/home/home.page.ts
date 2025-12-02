@@ -50,6 +50,9 @@ export class HomePage implements OnInit {
     
   }
 
+  goCart(){
+    this.navCtrl.navigateRoot('home/carrito');
+  }
   onSelect(item: any){
     //Condicion la cual muestra que categoría está seleccionada
     this.selectedItem = this.selectedItem === item ? [] : item;
@@ -60,10 +63,6 @@ export class HomePage implements OnInit {
     this.ProductList = this.selectedItem.productos || [];
     this.categorySelected = this.categorySelected != name ? name : 'none';
     this.changeNoSelect();
-  }
-
-  goCart(){
-    this.navCtrl.navigateRoot('user/shop/leones/carrito');
   }
 
   changeNoSelect(){

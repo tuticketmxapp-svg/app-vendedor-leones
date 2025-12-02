@@ -102,12 +102,12 @@ export class DetalleProductoComponent  implements OnInit {
 
   goCart(){
     this.cartModal.dismiss();
-    this.navCtrl.navigateRoot('user/shop/leones/carrito');
+    this.navCtrl.navigateRoot('home/carrito');
   }
 
   goStore(){
     this.cartModal.dismiss();
-    this.navCtrl.navigateRoot('user/shop/leones');
+    this.navCtrl.navigateRoot('home');
   }
 
   async addToCart(){

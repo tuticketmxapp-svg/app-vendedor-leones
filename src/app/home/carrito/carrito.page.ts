@@ -1,5 +1,8 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { IonModal, NavController, ToastController } from '@ionic/angular';
+import { FormsModule } from '@angular/forms';
+import { IonicModule, IonModal, NavController, ToastController } from '@ionic/angular';
+import { SharedModule } from 'src/app/shared.module';
 import { CashlessService } from 'src/services/cashless.service';
 import { LottieService } from 'src/services/lottie.service';
 declare var OpenPay: any;
@@ -7,6 +10,13 @@ declare var OpenPay: any;
   selector: 'app-carrito',
   templateUrl: './carrito.page.html',
   styleUrls: ['./carrito.page.scss'],
+  standalone: true,
+  imports: [
+    IonicModule,
+    SharedModule,
+    CommonModule,
+    FormsModule,
+  ],
 })
 export class CarritoComponent implements OnInit {
 
@@ -38,7 +48,7 @@ export class CarritoComponent implements OnInit {
   }
 
   goStore(){
-    this.navCtrl.navigateForward('user/shop/leones');
+    this.navCtrl.navigateRoot('home');
   }
 
   getCart(){

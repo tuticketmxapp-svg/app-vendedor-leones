@@ -29,21 +29,21 @@ export class CashlessService {
   }
 
   addToCart(data: any){
-    return this.http.post(`${environment.apiV1}cart/add`, data);
+    return this.http.post(`${environment.apiV1}vendor/cart/add`, data);
   }
 
   removeToCart(product_id: number, atributo: string){
-    return this.http.delete(`${environment.apiV1}cart/${product_id}?atributo=${atributo}`);
+    return this.http.delete(`${environment.apiV1}vendor/cart/${product_id}?atributo=${atributo}`);
   }
 
   getCartCount(){
 
-    return this.http.get(`${environment.apiV1}cart/count`);
+    return this.http.get(`${environment.apiV1}vendor/cart/count`);
   }
 
   getCart(){
     let userStr: any = localStorage.getItem("user_data");
     const userData: any = JSON.parse(userStr);
-    return this.http.get(`${environment.apiV1}cart/${userData.id}`);
+    return this.http.get(`${environment.apiV1}vendor/cart/${userData.id}`);
   }
 }
