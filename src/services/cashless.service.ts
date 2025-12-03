@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { catchError } from 'rxjs/operators';
 import { ErrorHandlerService } from 'src/services/error-handler.service';
+import { CapacitorBarcodeScanner } from '@capacitor/barcode-scanner';
 
 @Injectable({
   providedIn: 'root'
@@ -29,21 +30,39 @@ export class CashlessService {
   }
 
   addToCart(data: any){
-    return this.http.post(`${environment.apiV1}vendor/cart/add`, data);
+    let token = localStorage.getItem('access_token');
+    const headers = { 'Authorization': `Bearer ${token}`, 'responseType' :"text" };
+    return this.http.post(`${environment.apiV1}vendor/cart/add`, data, {headers: headers});
   }
 
   removeToCart(product_id: number, atributo: string){
-    return this.http.delete(`${environment.apiV1}vendor/cart/${product_id}?atributo=${atributo}`);
+    let token = localStorage.getItem('access_token');
+    const headers = { 'Authorization': `Bearer ${token}`, 'responseType' :"text" };
+    return this.http.delete(`${environment.apiV1}vendor/cart/${product_id}?atributo=${atributo}`, {headers});
   }
 
   getCartCount(){
-
-    return this.http.get(`${environment.apiV1}vendor/cart/count`);
+    let token = localStorage.getItem('access_token');
+    const headers = { 'Authorization': `Bearer ${token}`, 'responseType' :"text" };
+    return this.http.get(`${environment.apiV1}vendor/cart/count`, {headers});
   }
 
   getCart(){
-    let userStr: any = localStorage.getItem("user_data");
-    const userData: any = JSON.parse(userStr);
-    return this.http.get(`${environment.apiV1}vendor/cart/${userData.id}`);
+    let token = localStorage.getItem('access_token');
+    const headers = { 'Authorization': `Bearer ${token}`, 'responseType' :"text" };
+    return this.http.get(`${environment.apiV1}vendor/cart`, {headers});
+  }
+
+  async scan(val?: number){
+    try {
+      const result = await CapacitorBarcodeScanner.scanBarcode({
+        hint: val || 17,
+        cameraDirection: 1
+      });
+
+      return result.ScanResult;
+    } catch (error) {
+      throw error;
+    }
   }
 }

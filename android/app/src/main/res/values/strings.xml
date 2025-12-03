@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Leones Vendedores</string>
+    <string name="title_activity_main">Leones Vendedores</string>
+    <string name="package_name">io.leones.vendores</string>
+    <string name="custom_url_scheme">io.leones.vendores</string>
+</resources>

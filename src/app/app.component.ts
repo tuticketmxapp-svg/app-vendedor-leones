@@ -84,6 +84,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     // });
     this.setStatusBarColor();
     this.setStatusBarStyle();
+    StatusBar.setOverlaysWebView({ overlay: false });
 
     this.userService.cartCount = Number(localStorage.getItem('cart'));
 

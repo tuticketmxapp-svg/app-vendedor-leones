@@ -62,14 +62,6 @@
 
             <ion-button expand="block" class="btn-login" (click)="login()"> Iniciar sesión </ion-button>
 
-            <div class="line-container">
-              <hr/> <span>&nbsp; O &nbsp;</span> <hr/>
-            </div>
-
-            <ion-button expand="block" class="btn-google mb-4"> <img src="./assets/img/google.svg" alt="" />&nbsp;CONTINUAR CON GOOGLE </ion-button>
-
-            <p>¿No tienes cuenta aún? <a (click)="tabS = 'register'" class="olvidaste">Regístrate aquí</a></p> 
-
           </ion-segment-content>
 
           <ion-segment-content id="register" [ngClass]="{ 'login': tabS == 'login', 'register': tabS !== 'login' }">

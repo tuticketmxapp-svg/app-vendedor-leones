@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { CashlessService } from 'src/services/cashless.service';
 import { LottieService } from 'src/services/lottie.service';
 import { Router } from '@angular/router';
-import { MenuController, NavController } from '@ionic/angular';
+import { IonModal, MenuController, NavController } from '@ionic/angular';
 import { UserService } from 'src/services/user.service';
 
 @Component({
@@ -14,12 +14,14 @@ import { UserService } from 'src/services/user.service';
 })
 export class HomePage implements OnInit {
 
+  @ViewChild('scanModal') scanModal!: IonModal;
   private subscription: Subscription = new Subscription();
   
   tabS = 'home';
   categorySelected = 'none';
   isCategoriesTab = false;
   CategoriesList: any[] = []; 
+  stringScan: string = "";
 
   ProductList: any[] = [];
 
@@ -33,6 +35,16 @@ export class HomePage implements OnInit {
 
   ngOnInit() {
     this.getCategoriaConProductos();
+  }
+
+  async scanQR(){
+    try {
+      const code = await this.cashlessService.scan();
+      this.stringScan = code;
+      this.scanModal.present();
+    } catch (error) {
+      
+    }
   }
 
   getCategoriaConProductos() {

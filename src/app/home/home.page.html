@@ -122,4 +122,28 @@
 
   </div>
 
+  <ion-modal #scanModal trigger="open-scan" [initialBreakpoint]="0.23" [breakpoints]="[0, 0.23]" style="--backdrop-opacity: 2.8;" cssClass="modal-custom">
+
+      <ng-template>
+
+        <ion-content>
+
+          <ion-grid style="margin-block-start: 10px;">
+
+            <ion-item>
+
+              <div class="product-det-tar">
+                <h1>Se ha detectado el mensaje</h1>
+                <p> {{ stringScan }} </p>
+              </div>
+            </ion-item>
+
+          </ion-grid>
+
+        </ion-content>
+        
+      </ng-template>
+
+    </ion-modal>
+
 </ion-content>

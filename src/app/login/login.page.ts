@@ -129,59 +129,6 @@ export class LoginPage implements OnInit, OnDestroy {
   // ==========================
   // LOGIN VENDEDOR (BACKEND)
   // ==========================
-  login() {
-    if (!this.userLogin.email || !this.userLogin.password) {
-      this.swal.error('Error', 'Debes ingresar correo y contraseña');
-      return;
-    }
-
-    const data = {
-      usuario: this.userLogin.email,   //  campo que espera backend
-      password: this.userLogin.password,
-    };
-
-    this.loaderService.showLoader();
-
-    this.subscription.add(
-      this.loginService.loginVendor(data).subscribe({
-        next: (resp: any) => {
-          this.loaderService.hideLoader();
-          console.log('Respuesta loginVendor:', resp);
-
-          if (resp?.status === 'success') {
-            const vendedor = resp.data?.usuario ?? null;
-
-            if (vendedor) {
-              // guarda info del vendedor
-              this.userDataService.setUserData(vendedor);
-              localStorage.setItem('user_data', JSON.stringify(vendedor));
-
-              localStorage.setItem('user_id', vendedor.id);
-              localStorage.setItem('token', resp.data?.token);
-              localStorage.setItem("access_token", resp.data?.token);
-              this.cookie.set('access_token', resp.data?.token, 2, '/');
-            }
-
-            this.loggedIn.emit(true);
-            this.swal.success('Inicio de sesión correcto');
-            this.route.navigate(['/home'], { replaceUrl: true });
-          } else {
-            const msg = resp?.message ?? 'Credenciales inválidas';
-            this.swal.error('Error', msg);
-          }
-        },
-        error: (error: any) => {
-          this.loaderService.hideLoader();
-          console.error('Error en loginVendor:', error);
-          const msg =
-            error?.error?.message ||
-            error?.message ||
-            'Ocurrió un error al iniciar sesión';
-          this.swal.error('Error', msg);
-        },
-      })
-    );
-  }
 
   getCurrentUser(): any {
     return JSON.parse(localStorage.getItem('user_data') ?? '[]');
@@ -225,6 +172,65 @@ export class LoginPage implements OnInit, OnDestroy {
 
   signOut(): void {
     // lo podemos llenar luego
+  }
+
+  // ==========================
+  // LOGIN VENDEDOR // ==========================
+  login() {
+    if (!this.userLogin.email || !this.userLogin.password) {
+      this.swal.error('Error', 'Debes ingresar correo y contraseña');
+      return;
+    }
+
+    const data = {
+      usuario: this.userLogin.email,   // campo que espera el backend
+      password: this.userLogin.password,
+    };
+
+    this.loaderService.showLoader();
+
+    this.subscription.add(
+      this.loginService.loginVendor(data).subscribe({
+        next: (resp: any) => {
+          this.loaderService.hideLoader();
+          console.log('Respuesta loginVendor:', resp);
+
+          // resp debe ser: { access_token, token_type, user, expires_at }
+          const token    = resp?.access_token;
+          const vendedor = resp?.user;
+
+          if (token && vendedor) {
+            // guarda info del vendedor
+            this.userDataService.setUserData(vendedor);
+            localStorage.setItem('user_data', JSON.stringify(vendedor));
+            localStorage.setItem('user_id', String(vendedor.id));
+
+            // mantenemos las mismas claves que ya usabas
+            localStorage.setItem('token', token);
+            localStorage.setItem('access_token', token);
+            this.cookie.set('access_token', token, 2, '/');
+
+            this.loggedIn.emit(true);
+            this.swal.success('Inicio de sesión correcto');
+            this.route.navigate(['/home'], { replaceUrl: true });
+          } else {
+            this.swal.error(
+              'Error',
+              'La respuesta del servidor no contiene los datos esperados.'
+            );
+          }
+        },
+        error: (error: any) => {
+          this.loaderService.hideLoader();
+          console.error('Error en loginVendor:', error);
+          const msg =
+            error?.error?.message ||
+            error?.message ||
+            'Ocurrió un error al iniciar sesión';
+          this.swal.error('Error', msg);
+        },
+      })
+    );
   }
 
   generateVerificationCode(length: number = 6): string {
