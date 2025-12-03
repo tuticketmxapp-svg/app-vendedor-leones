@@ -89,17 +89,24 @@
       <label class="label-custom">Seleccione su tipo de pago</label>
       <ion-radio-group [(ngModel)]="methodPay">
 
-        <div class="radio-custom" [ngClass]="methodPay == 'monedero' ? 'selected' : ''">
+        <div class="radio-custom" [ngClass]="methodPay == 'efectivo' ? 'selected' : ''" (click)="changeOpt()">
 
-          <ion-radio value="monedero" labelPlacement="end">Monedero</ion-radio>
+          <ion-radio value="efectivo" labelPlacement="end">Efectivo</ion-radio>
+          <img src="assets/img/efectivo.png" alt="">
+
+        </div>
+
+        <div class="radio-custom" [ngClass]="methodPay == 'monedero' ? 'selected' : ''" (click)="changeOpt()">
+
+          <ion-radio value="monedero" labelPlacement="end">Monedero del cliente</ion-radio>
           <img src="assets/img/card.jpeg" alt="">
 
         </div>
 
-        <div class="radio-custom" [ngClass]="methodPay == 'openpay' ? 'selected' : ''">
+        <div class="radio-custom" [ngClass]="methodPay == 'terminal' ? 'selected' : ''" (click)="changeOpt()">
 
-          <ion-radio value="openpay" labelPlacement="end">OpenPay</ion-radio>
-          <img src="assets/img/openpay.png" alt="">
+          <ion-radio value="terminal" labelPlacement="end">Terminal bancaria</ion-radio>
+          <img src="assets/img/terminalBancaria.png" alt="">
 
         </div>
 
@@ -109,9 +116,188 @@
 
     <div class="container mt-4 mb-2">
 
-      <!-- Campos de datos del cliente -->
+      <!-- Campos de datos del cliente en caso de QR -->
 
-      <ion-grid class="custom-input-cont">
+      <ion-grid class="custom-input-cont" *ngIf="methodPay == 'monedero'">
+
+        <ion-row class="title-cont"> 
+          
+          <ion-col> 
+            
+            <div style="display: flex; justify-content: space-between;" class="custom-search">
+
+              <p>Datos del cliente</p> 
+            </div>
+            
+          </ion-col>
+
+        </ion-row>
+
+        <label *ngIf="methodPay == 'monedero'"> Buscar cliente por email (Correo electrónico)</label>
+        <ion-row *ngIf="methodPay == 'monedero'"> 
+            
+          <ion-col> 
+            
+            <div class="input-cont custom-search" style="display: flex;">
+              
+              <ion-input type="text" placeholder="Ingresar correo de cliente" class="form-control inputs-form" [(ngModel)]="searchEmail" mode="ios" [ngClass]="!isValidSearchEmail ? 'bColorRed' : ''" [disabled]="isSearchEmail"></ion-input>
+              
+              <ion-button (click)="searchClient()" *ngIf="!isSearchEmail">
+                <ion-icon name="search-outline"></ion-icon>
+              </ion-button>
+
+              <ion-button (click)="resetEmail()" *ngIf="isSearchEmail">
+                <ion-icon name="close-outline"></ion-icon>
+              </ion-button>
+
+            </div>
+
+          </ion-col>
+          
+        </ion-row>
+
+        <ion-row class="alert" *ngIf="!isValidSearchEmail"> <ion-icon name="alert-circle"></ion-icon> <p> No hay ningún usuario confirmado. </p> </ion-row>
+
+        <div *ngIf="userData.id">
+          <ion-row> 
+          
+            <ion-col> 
+              
+              <div class="input-cont">
+                <label> Nombre completo </label>
+                <ion-input type="text" class="form-control inputs-form" [(ngModel)]="userData.name" mode="ios" [ngClass]="!isValidName ? 'bColorRed' : ''" [disabled]="userData.name"></ion-input>
+                <ion-row class="alert" *ngIf="!isValidName"> <ion-icon name="alert-circle"></ion-icon> <p> Este campo es obligario. </p> </ion-row>
+              </div>
+
+            </ion-col>
+            
+          </ion-row>
+
+          <!--
+          <ion-row> 
+            
+            <ion-col> 
+              
+              <div class="input-cont">
+                <label> Email (Correo electrónico) </label>
+                <ion-input type="text" class="form-control inputs-form" [(ngModel)]="userData.email" mode="ios" [ngClass]="!isValidEmail ? 'bColorRed' : ''" [disabled]="userData.email"></ion-input>
+                <ion-row class="alert" *ngIf="!isValidEmail"> <ion-icon name="alert-circle"></ion-icon> <p> Este campo es obligario. </p> </ion-row>
+              </div>
+
+            </ion-col>
+            
+          </ion-row>
+        -->
+
+          <ion-row> 
+            
+            <ion-col> 
+              
+              <div class="input-cont">
+                <label> Número de teléfono </label>
+                <ion-input type="text" class="form-control inputs-form" maxlength="10" [(ngModel)]="userData.telefono" mode="ios" [ngClass]="!isValidTelefono ? 'bColorRed' : ''" [disabled]="userData.telefono"></ion-input>
+                <ion-row class="alert" *ngIf="!isValidTelefono"> <ion-icon name="alert-circle"></ion-icon> <p> Este campo es obligario. </p> </ion-row>
+              </div>
+
+            </ion-col>
+            
+          </ion-row>
+
+          <ion-row *ngIf="userData.calle"> 
+            
+            <ion-col> 
+              
+              <div class="input-cont">
+                <label> Dirección </label>
+                <ion-input type="text" class="form-control inputs-form" [(ngModel)]="userData.calle" mode="ios" [ngClass]="!isValidCalle ? 'bColorRed' : ''" [disabled]="userData.calle"></ion-input>
+                <ion-row class="alert" *ngIf="!isValidCalle"> <ion-icon name="alert-circle"></ion-icon> <p> Este campo es obligario. </p> </ion-row>
+              </div>
+
+            </ion-col>
+            
+          </ion-row>
+
+          <ion-row *ngIf="!userData.country && userData.state"> 
+            
+            <ion-col size="6" *ngIf="userData.country"> 
+              
+              <div class="input-cont" >
+                <ion-input type="text" class="form-control inputs-form" [(ngModel)]="userData.country" mode="ios" [ngClass]="!isValidCountry ? 'bColorRed' : ''" [disabled]="userData.country"></ion-input>
+                <ion-row class="alert" *ngIf="!isValidCountry"> <ion-icon name="alert-circle"></ion-icon> <p> Este campo es obligario. </p> </ion-row>
+              </div>
+
+            </ion-col>
+
+            <ion-col size="6" *ngIf="userData.state"> 
+              
+              <div class="input-cont">
+                <ion-input type="text" class="form-control inputs-form" [(ngModel)]="userData.state" mode="ios" [ngClass]="!isValidState ? 'bColorRed' : ''" [disabled]="userData.state" ></ion-input>
+                <ion-row class="alert" *ngIf="!isValidState"> <ion-icon name="alert-circle"></ion-icon> <p> Este campo es obligario. </p> </ion-row>
+              </div>
+
+            </ion-col>
+            
+          </ion-row>
+
+          <ion-row *ngIf="userData.city"> 
+            
+            <ion-col> 
+              
+              <div class="input-cont">
+                <ion-input type="text" class="form-control inputs-form" [(ngModel)]="userData.city" mode="ios" [ngClass]="!isValidCity ? 'bColorRed' : ''" [disabled]="userData.city" ></ion-input>
+                <ion-row class="alert" *ngIf="!isValidCity"> <ion-icon name="alert-circle"></ion-icon> <p> Este campo es obligario. </p> </ion-row>
+              </div>
+
+            </ion-col>
+            
+          </ion-row>
+
+          <ion-row *ngIf="userData.colonia"> 
+            
+            <ion-col> 
+              
+              <div class="input-cont">
+                <label> Colonia </label>
+                <ion-input type="text" class="form-control inputs-form" [(ngModel)]="userData.colonia" mode="ios" [ngClass]="!isValidColonia ? 'bColorRed' : ''"[disabled]="userData.colonia" ></ion-input>
+                <ion-row class="alert" *ngIf="!isValidColonia"> <ion-icon name="alert-circle"></ion-icon> <p> Este campo es obligario. </p> </ion-row>
+              </div>
+
+            </ion-col>
+            
+          </ion-row>
+
+          <ion-row  *ngIf="userData.cp"> 
+            
+            <ion-col> 
+              
+              <div class="input-cont">
+                <label> Código postal </label>
+                <ion-input type="text" class="form-control inputs-form" [(ngModel)]="userData.cp" mode="ios" [ngClass]="!isValidCP ? 'bColorRed' : ''" [disabled]="userData.cp"></ion-input>
+                <ion-row class="alert" *ngIf="!isValidCP"> <ion-icon name="alert-circle"></ion-icon> <p> Este campo es obligario. </p> </ion-row>
+              </div>
+
+            </ion-col>
+            
+          </ion-row>
+
+          <ion-row *ngIf="userData.fechaNacimiento"> 
+            
+            <ion-col> 
+              
+              <div class="input-cont">
+                <label> Fecha de nacimiento </label>
+                <ion-input type="text" class="form-control inputs-form" [(ngModel)]="userData.fechaNacimiento" mode="ios" [ngClass]="!isValidCP ? 'bColorRed' : ''" [disabled]="userData.fechaNacimiento" ></ion-input>
+                <ion-row class="alert" *ngIf="!isValidFechaNacimiento"> <ion-icon name="alert-circle"></ion-icon> <p> Este campo es obligario. </p> </ion-row>
+              </div>
+
+            </ion-col>
+            
+          </ion-row>
+        </div>
+
+      </ion-grid>
+
+      <ion-grid class="custom-input-cont" *ngIf="methodPay != 'monedero'">
 
         <ion-row class="title-cont"> <ion-col> <p>Datos del cliente</p> </ion-col> </ion-row>
 
@@ -149,7 +335,7 @@
             
             <div class="input-cont">
               <label> Número de teléfono </label>
-              <ion-input type="text" class="form-control inputs-form" maxlength="10" [(ngModel)]="userData.telefono" mode="ios" [ngClass]="!isValidTelefono ? 'bColorRed' : ''"></ion-input>
+              <ion-input type="text" inputmode="numeric" maxlength="10" class="form-control inputs-form" [(ngModel)]="userData.telefono" mode="ios" [ngClass]="!isValidTelefono ? 'bColorRed' : ''"></ion-input>
               <ion-row class="alert" *ngIf="!isValidTelefono"> <ion-icon name="alert-circle"></ion-icon> <p> Este campo es obligario. </p> </ion-row>
             </div>
 
@@ -226,7 +412,7 @@
             
             <div class="input-cont">
               <label> Código postal </label>
-              <ion-input type="text" class="form-control inputs-form" [(ngModel)]="userData.cp" mode="ios" [ngClass]="!isValidCP ? 'bColorRed' : ''"></ion-input>
+              <ion-input type="number" maxlength="8" inputmode="numeric" class="form-control inputs-form" [(ngModel)]="userData.cp" mode="ios" [ngClass]="!isValidCP ? 'bColorRed' : ''"></ion-input>
               <ion-row class="alert" *ngIf="!isValidCP"> <ion-icon name="alert-circle"></ion-icon> <p> Este campo es obligario. </p> </ion-row>
             </div>
 
@@ -249,34 +435,18 @@
         </ion-row>
 
       </ion-grid>
-    
-      <!-- Métodos de pago -->
-      <ion-grid class="custom-input-cont" *ngIf="methodPay === 'openpay'">
+      
+      <ion-grid class="custom-input-cont">
 
-        <ion-row class="title-cont"> <ion-col> <p>Openpay</p> </ion-col> </ion-row>
-
-        <ion-row> 
-          
-          <ion-col> 
-            
-            <div class="input-cont">
-              <label> Nombre del titular </label>
-              <ion-input type="text" class="form-control inputs-form" [(ngModel)]="userData.nameTitular" mode="ios" [ngClass]="!isValidNameTitular ? 'bColorRed' : ''"></ion-input>
-              <ion-row class="alert" *ngIf="!isValidNameTitular"> <ion-icon name="alert-circle"></ion-icon> <p> Este campo es obligatorio. </p> </ion-row>
-            </div>
-
-          </ion-col>
-           
-        </ion-row>
+        <ion-row class="title-cont"> <ion-col> <p>Datos del vendedor</p> </ion-col> </ion-row>
 
         <ion-row> 
           
           <ion-col> 
             
             <div class="input-cont">
-              <label> Número de teléfono </label>
-              <ion-input type="text" class="form-control inputs-form" [(ngModel)]="userData.telefonoTitular" mode="ios" [ngClass]="!isValidTelefonoTitular ? 'bColorRed' : ''"></ion-input>
-              <ion-row class="alert" *ngIf="!isValidTelefonoTitular"> <ion-icon name="alert-circle"></ion-icon> <p> Este campo es obligatorio. </p> </ion-row>
+              <label> Nombre completo </label>
+              <ion-input type="text" class="form-control inputs-form" [(ngModel)]="vendedorData.name" mode="ios" [disabled]="vendedorData.name"></ion-input>
             </div>
 
           </ion-col>
@@ -289,62 +459,7 @@
             
             <div class="input-cont">
               <label> Email (Correo electrónico) </label>
-              <ion-input type="text" class="form-control inputs-form" [(ngModel)]="userData.emailTitular" mode="ios" [ngClass]="!isValidEmailTitular ? 'bColorRed' : ''"></ion-input>
-              <ion-row class="alert" *ngIf="!isValidEmailTitular"> <ion-icon name="alert-circle"></ion-icon> <p> Este campo es obligatorio. </p> </ion-row>
-            </div>
-
-          </ion-col>
-           
-        </ion-row>
-
-        <ion-row> 
-          
-          <ion-col> 
-            
-            <div class="input-cont">
-              <label> Confirmar email (Correo electrónico) </label>
-              <ion-input type="text" class="form-control inputs-form" [(ngModel)]="userData.confirmarEmail" mode="ios" [ngClass]="!isValidConfirmarEmail ? 'bColorRed' : ''"></ion-input>
-              <ion-row class="alert" *ngIf="!isValidConfirmarEmail"> <ion-icon name="alert-circle"></ion-icon> <p> {{ userData.confirmarEmail != userData.emailTitular ? 'El correo no coincide' : 'Este campo es obligatorio.' }} </p> </ion-row>
-            </div>
-
-          </ion-col>
-           
-        </ion-row>
-
-        <ion-row> 
-          
-          <ion-col> 
-            
-            <div class="input-cont">
-              <label> Número de tarjeta </label>
-              <ion-input type="text" class="form-control inputs-form"  cardValidation [(ngModel)]="tarjeta" mode="ios" [ngClass]="!isValidTarjeta ? 'bColorRed' : ''"></ion-input>
-              <ion-row class="alert" *ngIf="!isValidTarjeta"> <ion-icon name="alert-circle"></ion-icon> <p> Este campo es obligatorio. </p> </ion-row>
-            </div>
-
-          </ion-col>
-           
-        </ion-row>
-
-        <ion-row> 
-          
-          <ion-col size="6"> 
-            
-            <div class="input-cont">
-              
-              <label> Vencimiento (MM/AA) </label>
-              <ion-input type="text" inputmode="numeric" (ionInput)="formatVal()" class="form-control inputs-form" maxlength="5" [(ngModel)]="fv" mode="ios" [ngClass]="!isValidFV ? 'bColorRed' : ''"></ion-input>
-              <ion-row class="alert" *ngIf="!isValidFV"> <ion-icon name="alert-circle"></ion-icon> <p> Este campo es obligatorio. </p> </ion-row>
-
-            </div>
-
-          </ion-col>
-
-          <ion-col size="6"> 
-            
-            <div class="input-cont">
-              <label> CVV/CVC </label>
-              <ion-input type="text" class="form-control inputs-form" maxlength="4" [(ngModel)]="cvv" mode="ios" [ngClass]="!isValidFV ? 'bColorRed' : ''"></ion-input>
-              <ion-row class="alert" *ngIf="!isValidCVV"> <ion-icon name="alert-circle"></ion-icon> <p> Este campo es obligatorio. </p> </ion-row>
+              <ion-input type="text" class="form-control inputs-form" [(ngModel)]="vendedorData.email" mode="ios" [disabled]="vendedorData.email"></ion-input>
             </div>
 
           </ion-col>
@@ -352,7 +467,6 @@
         </ion-row>
 
       </ion-grid>
-      
       
       <div class="product-btn-cont">
         <!-- Botones de compra -->
@@ -408,14 +522,15 @@
                         <div class="card-img">
                           <div><img [src]="methodPay == 'monedero' ? 'assets/img/card.jpeg' : 'assets/img/openpay.png'" alt=""></div>
                           <div class="desc">
-                            <p>{{ methodPay == 'monedero' ? 'Pago con monedero' : 'Pago con Openpay' }}</p>
-                            <p>{{ methodPay == 'monedero' ? 'Saldo restante: $0.00 MXN' : '**** **** **** ' + tarjeta.slice(-4) }}</p>
+                            <p>{{ methodPay == 'monedero' ? 'Pago con monedero de ' + userData.name : 'Pago con Openpay' }}</p>
+                            <p [ngClass]="!isQRconfirm ? 'bCRed' : ''">Escanea primero su código QR</p>
                           </div>
                         </div>
 
                         <div class="price">
                           <div>
-                            <ion-button (click)="closeBuyModal()"> <ion-icon name="create-outline"> </ion-icon> </ion-button>
+                            <ion-button *ngIf="!isQRconfirm" (click)="scanQR()" style="--background: #00000017;"> <ion-icon name="qr-code-outline"> </ion-icon> </ion-button>
+                            <ion-icon *ngIf="isQRconfirm" name="checkmark-outline" style="color: rgb(41, 190, 21); inline-size: 30px; block-size: 30px;"></ion-icon>
                           </div>
                         </div>
                         
@@ -428,7 +543,7 @@
                   <ion-row class="buttons-cart">
 
                     <ion-col size="12" style="display: flex; justify-content: flex-end;">
-                      <ion-button (click)="saleProduct()" style="padding-inline: 20px;"> <ion-icon name="checkmark-outline" size="large"></ion-icon> Confirmar compra </ion-button>
+                      <ion-button (click)="saleProduct()" style="padding-inline: 20px;" [disabled]="!isQRconfirm"> <ion-icon name="checkmark-outline" size="large"></ion-icon> Confirmar compra </ion-button>
                     </ion-col>
 
                   </ion-row>

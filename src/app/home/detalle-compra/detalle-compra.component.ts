@@ -14,6 +14,7 @@ import { Capacitor } from '@capacitor/core';
 import { SharedModule } from 'src/app/shared.module';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import * as CryptoJS from "crypto-js";
 declare var OpenPay: any;
 
 @Component({
@@ -38,6 +39,11 @@ export class DetalleCompraComponent  implements OnInit {
   listStates: { name: any; }[] | undefined;
   me;
 
+  searchEmail: string = "";
+  isSearchEmail: boolean = false;
+  isQRconfirm: boolean = false;
+
+  isValidSearchEmail = true;
   isValidName = true;
   isValidEmail = true;
   isValidTelefono = true;
@@ -56,6 +62,13 @@ export class DetalleCompraComponent  implements OnInit {
   isValidTarjeta = true;
   isValidFV = true;
   isValidCVV = true;
+
+  vendedorData: any = [
+    {
+      name: "",
+      email: ""
+    }
+  ];
   
   userData: any = [
     {
@@ -208,11 +221,8 @@ export class DetalleCompraComponent  implements OnInit {
 
   ngOnInit() {
     this.getCountries();
-    const userData: any = this.localStorageService.getItem('user_data');
-    this.userData = JSON.parse(userData);
-    this.userData.nameTitular = this.userData.name;
-    this.userData.telefonoTitular = this.userData.telefono;
-    this.userData.emailTitular = this.userData.email;
+    const vendorData: any = this.localStorageService.getItem('user_data');
+    this.vendedorData = JSON.parse(vendorData);
 
     this.addComisionConIVA(this.methodPay as keyof typeof this.metodoPago, 1, this.subtotal || 0);
 
@@ -223,6 +233,36 @@ export class DetalleCompraComponent  implements OnInit {
 
         console.log("country: ", this.me.country, this.countryCode);
     }, 2000);
+  }
+  
+  searchClient() {
+    this.lottieService.showLoader();
+    //Servicio que obtiene los clientes según el filtro
+
+    this.cashservice.getClientesByEmail(this.searchEmail).subscribe(response => {
+      
+      console.log(response);
+
+      if(response.length === 1){
+        const re = response[0];
+        this.searchEmail = re?.email;
+
+        this.userData.id = re.id;
+        this.userData.name = re.name;
+        this.userData.email = re.email;
+        this.userData.telefono = re.telefono;
+
+        this.isSearchEmail = true;
+        this.isValidSearchEmail = true;
+
+      }else{
+        this.isSearchEmail = false;
+        this.isQRconfirm = false;
+        this.alertService.error("El cliente no existe", "El cliente no se encuentra disponible o no existe, intente nuevamente.");
+      }
+
+      this.lottieService.hideLoader();
+    });
   }
 
   addComisionConIVA(pasarela: keyof typeof this.metodoPago, meses: number, importe: number) {
@@ -290,54 +330,20 @@ export class DetalleCompraComponent  implements OnInit {
     }
   }
 
-  openBuyModal(){
+  openBuyModal(){ 
+    this.isValidSearchEmail = this.isSearchEmail;
 
-    this.isValidName = String(this.userData.name || "").trim().length > 0;
-    this.isValidEmail = String(this.userData.email || "").trim().length > 0;
-    this.isValidTelefono = String(this.userData.telefono || "").trim().length > 0;
-    this.isValidCalle = String(this.userData.calle || "").trim().length > 0;
-    this.isValidCountry = String(this.userData.country || "").trim().length > 0;
-    this.isValidState = String(this.userData.state || "").trim().length > 0;
-    this.isValidCity = String(this.userData.city || "").trim().length > 0;
-    this.isValidColonia = String(this.userData.colonia || "").trim().length > 0;
-    this.isValidCP = String(this.userData.cp || "").trim().length > 0;
-    this.isValidFechaNacimiento = String(this.userData.fechaNacimiento || "").trim().length > 0;
-
-    let isValidOP = true;
-
-    if(this.methodPay == 'openpay'){
-      this.isValidNameTitular = String(this.userData.nameTitular || "").trim().length > 0;
-      this.isValidTelefonoTitular = String(this.userData.telefonoTitular || "").trim().length > 0;
-      this.isValidEmailTitular = String(this.userData.emailTitular || "").trim().length > 0;
-      this.isValidConfirmarEmail = String(this.userData.confirmarEmail || "").trim().length > 0 && (this.userData.confirmarEmail == this.userData.emailTitular);
-      this.isValidTarjeta = String(this.tarjeta || "").trim().length > 11;
-      this.isValidFV = String(this.fv || "").trim().length > 0;
-      this.isValidCVV = String(this.cvv || "").trim().length > 2;
-
-      isValidOP = this.isValidNameTitular &&
-      this.isValidTelefonoTitular &&
-      this.isValidEmailTitular &&
-      this.isValidConfirmarEmail &&
-      this.isValidTarjeta &&
-      this.isValidFV &&
-      this.isValidCVV;
-    }
-
-    const allValid =
-    this.isValidName &&
-    this.isValidEmail &&
-    this.isValidTelefono &&
-    this.isValidCalle &&
-    this.isValidCountry &&
-    this.isValidState &&
-    this.isValidCity &&
-    this.isValidColonia &&
-    this.isValidCP &&
-    this.isValidFechaNacimiento;
-
-    if(allValid && isValidOP){
+    if(this.isValidSearchEmail){
       this.buyModal.present();
     }
+    
+  }
+
+  resetEmail(){
+    this.userData.id = 0;
+    this.searchEmail = "";
+    this.isSearchEmail = false;
+    this.isQRconfirm = false;
   }
 
   closeBuyModal(){
@@ -560,5 +566,40 @@ export class DetalleCompraComponent  implements OnInit {
 
   goCart(){
     this.navCtrl.navigateRoot('home/carrito');
+  }
+
+  async scanQR(){
+    try {
+      
+      const code = await this.cashservice.scan();
+
+      const key = `${this.userData.id}`;
+      const bytes = CryptoJS.AES.decrypt(code, key);
+      const plainText = bytes.toString(CryptoJS.enc.Utf8);
+
+      try{
+        const scan = JSON.parse(plainText);
+        console.log(scan.userId, this.userData.id);
+        if(scan.userId === `${this.userData.id}`){
+          this.isQRconfirm = true;
+        }else{
+          this.isQRconfirm = false;
+          this.alertService.error("El usuario no coincide", "El usuario no coincide con el cliente agregado, intente nuevamente.");
+        }
+        
+      }catch{
+        this.alertService.error("El usuario no coincide", "El usuario no coincide con el cliente agregado, intente nuevamente.");
+      }
+      
+      
+    } catch (error) {
+      this.isQRconfirm = false;
+      this.alertService.error("El usuario no coincide", "El usuario no coincide con el cliente agregado, intente nuevamente.");
+    }
+  }
+
+  changeOpt(){
+    this.isSearchEmail = false;
+    this.searchEmail = "";
   }
 }

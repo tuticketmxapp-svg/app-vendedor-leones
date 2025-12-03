@@ -34,6 +34,7 @@
 
       <ion-skeleton-text [animated]="true" style="inline-size: 100%; block-size: 340px; position: absolute; border-radius: 0;" *ngIf="isLoading"></ion-skeleton-text>
 
+      <!--
       <div class="btn-share">
         <ion-button style="inset-inline-start: 0;"><ion-icon name="heart-outline"></ion-icon></ion-button>
       </div>
@@ -41,6 +42,7 @@
       <div class="btn-share">
         <ion-button><ion-icon name="share-social-outline"></ion-icon></ion-button>
       </div>
+      -->
 
       <div class="product-cont">
         <img src="{{ productInfo.imagen }}" alt="{{ productInfo.nombre }}" style="block-size: 265px; inline-size: 100%;" *ngIf="!isLoading">

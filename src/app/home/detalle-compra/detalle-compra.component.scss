@@ -263,6 +263,7 @@ div.selected{
         padding-inline: 20px;
         padding-block: 10px;
         margin-block-end: 10px;
+        align-items: center;
 
         p{
             margin: 0;
@@ -305,4 +306,28 @@ div.selected{
 
 .bColorRed{
     border-color: red;
+}
+
+.bCRed{
+    color: red;
+}
+
+.custom-search{
+    ion-button{
+        --background: #c9c9c94f;
+        --box-shadow: black 0 0;
+        --color: black;
+        --border-radius: 20px;
+        block-size: 45px;
+        inline-size: 50px;
+        margin: 0;
+        margin-inline-start: 5px;
+        font-size: 18px;
+
+        ion-icon{
+            inline-size: 24px;
+            block-size: 24px;
+            position: absolute;
+        }
+    }
 }

@@ -148,7 +148,7 @@ export class CarritoComponent implements OnInit {
 
     });    
 
-    this.navCtrl.navigateForward(['/user/detalleCompra'], {
+    this.navCtrl.navigateForward(['home/detalleCompra'], {
       queryParams: { products: JSON.stringify(products) },
       state: { from: '/' }
     });

@@ -29,7 +29,6 @@ export class DetalleProductoComponent  implements OnInit {
   @ViewChild('cantModal') cantModal!: IonModal;
   @ViewChild('cantNModal') cantNModal!: IonModal;
 
-  qrData = '{"monederoId":"4827668502028494","userId":"25418","fechaCreacion":"2025-09-05T20:56:34.838646Z"}'; 
   id_producto: number = 0;
   productoName: string = '';
   productInfo: any = [];
@@ -88,7 +87,6 @@ export class DetalleProductoComponent  implements OnInit {
 
 
   ngOnInit() {
-    this.menu.enable(true, 'main-menu');
     this.getProducto();
   }
 
@@ -163,7 +161,7 @@ export class DetalleProductoComponent  implements OnInit {
       this.isLoading = false;
       this.selectAttribute(0);
 
-      /*
+      
       this.cashlessService.getCart().subscribe((r2: any) => {
         
         this.cartList = r2.items.filter((cart: any) => cart.product_id == this.productInfo.id);
@@ -171,7 +169,7 @@ export class DetalleProductoComponent  implements OnInit {
         this.isLoading = false;
         this.selectAttribute(0);
 
-      });*/
+      });
 
     });
   }
@@ -219,12 +217,12 @@ export class DetalleProductoComponent  implements OnInit {
       this.attributeSelect = this.atributosList[index].name;
       this.atributosList.count = this.productCount;
 
-      const cart = this.cartList.find((cart: any) => cart.atributo == this.attributeSelect);
-      this.prevProductCount = cart?.cantidad || 0;
-
     }else{
       this.attributeSelect = "Único"
     }
+
+    const cart = this.cartList.find((cart: any) => cart.atributo == this.attributeSelect);
+    this.prevProductCount = cart?.cantidad || 0;
   }
 
   onSelectProduct(){

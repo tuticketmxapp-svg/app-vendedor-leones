@@ -65,4 +65,8 @@ export class CashlessService {
       throw error;
     }
   }
+
+  getClientesByEmail(data: any) {
+      return this.http.get<any>(`${environment.apiV1}clientes/buscar-email?q=${data}`).pipe(catchError(error => this.errorHandler.handleError(error)));
+  }
 }

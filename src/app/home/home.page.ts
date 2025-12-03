@@ -37,16 +37,6 @@ export class HomePage implements OnInit {
     this.getCategoriaConProductos();
   }
 
-  async scanQR(){
-    try {
-      const code = await this.cashlessService.scan();
-      this.stringScan = code;
-      this.scanModal.present();
-    } catch (error) {
-      
-    }
-  }
-
   getCategoriaConProductos() {
     this.lottie.showLoader();
 
