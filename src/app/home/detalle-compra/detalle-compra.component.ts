@@ -38,10 +38,12 @@ export class DetalleCompraComponent  implements OnInit {
   banderaCambioEstado = false;
   listStates: { name: any; }[] | undefined;
   me;
+  isCart: boolean = false;
 
   searchEmail: string = "";
   isSearchEmail: boolean = false;
   isQRconfirm: boolean = false;
+  isEfectiveOrTerminal: boolean = false;
 
   isValidSearchEmail = true;
   isValidName = true;
@@ -201,7 +203,8 @@ export class DetalleCompraComponent  implements OnInit {
 
     this.router.queryParams.subscribe(params => {
       this.products = JSON.parse(params['products']);
-      console.log(this.products);
+      this.isCart = JSON.parse(params['isCart']);
+      console.log(this.products, this.isCart);
 
       this.verifyAnyProduct();
 
@@ -223,6 +226,7 @@ export class DetalleCompraComponent  implements OnInit {
     this.getCountries();
     const vendorData: any = this.localStorageService.getItem('user_data');
     this.vendedorData = JSON.parse(vendorData);
+    console.log(vendorData);
 
     this.addComisionConIVA(this.methodPay as keyof typeof this.metodoPago, 1, this.subtotal || 0);
 
@@ -331,9 +335,11 @@ export class DetalleCompraComponent  implements OnInit {
   }
 
   openBuyModal(){ 
+
     this.isValidSearchEmail = this.isSearchEmail;
 
     if(this.isValidSearchEmail){
+
       this.buyModal.present();
     }
     
@@ -379,7 +385,8 @@ export class DetalleCompraComponent  implements OnInit {
       const prod = {
         "idProducto": r.data[0].id,
         "cantidad": count,
-        "iMSI": 0
+        "iMSI": 0,
+        "atributo": product.atributo
       };
 
       productsL.push(prod);
@@ -388,65 +395,75 @@ export class DetalleCompraComponent  implements OnInit {
 
     if(productsL.length > 0){ 
 
-      if(this.methodPay == "openpay"){
+      if(this.methodPay !== "monedero"){
 
-        this.deviceDataId = OpenPay.deviceData.setup("processCard");
-        const fvD = this.fv.split("/");
+        try {
+          // Verifica si hay biometría disponible
+          if(Capacitor.getPlatform() !== 'web'){
+            const result = await NativeBiometric.isAvailable();
 
-        const formObject = {
-            card_number: this.tarjeta,
-            holder_name: this.userData.name,
-            expiration_year: fvD[1],
-            expiration_month: fvD[0],
-            cvv2: this.cvv,
-            address: {
-              city: this.userData.city,
-              line3: '.',
-              postal_code: "123",
-              line1: "123",
-              line2: "123",
-              state: "123",
-              country_code: this.countryCode,
+            if (!result.isAvailable) {
+              console.log("Biometría no disponible");
+              return;
             }
-        };
 
-        this.productPay = {
-          "metodo_pago": this.methodPay,
-          "origin": "productos",
-          "user_id": this.userData.id,
-          "productos": productsL,
-          "cliente": {
-            "nombre": this.userData.name,
-            "correo": this.userData.email,
-            "telefono": this.userData.telefono,
-            "tarjeta": {
-              "numero": this.tarjeta,
-              "exp_month": fvD[0],
-              "exp_year": fvD[1],
-              "cvv": this.cvv
-            }
-          },
-          "formObject": formObject,
-          "device_session_id": this.deviceDataId,
-          "subtotal": this.subtotalStr,
-          "comision": this.cargoBancario,
-          "total": this.totalCobrarStr,
-        }
+            // Abrir el diálogo de huella/FaceID
+            await NativeBiometric.verifyIdentity({
+              reason: "Verificación de huella",
+              title: "Autenticación",
+              subtitle: "Coloca tu huella",
+              description: "Verificando identidad",
+            });
+          } 
 
-        console.log(this.productPay);
-        this.loaderService.hideLoader();
-
-        const modal = await this.modalController.create({
-          component: TerminosPayProductComponent,
-          componentProps: {
-            contentHtml: this.productPay
+          this.productPay = {
+            "metodo_pago": this.methodPay,
+            "origin": "productos",
+            "user_id": this.userData.id,
+            "productos": productsL,
+            "cliente": {
+              "nombre": this.userData.name,
+              "correo": this.userData.email,
+              "telefono": this.userData.telefono,
+            },
+            "subtotal": this.subtotalStr,
+            "comision": this.cargoBancario,
+            "total": this.totalCobrarStr,
+            "vendedor": {
+              id: this.vendedorData.id,
+              name: this.vendedorData.name,
+              email: this.vendedorData.email
+            },
           }
-        });
+          console.log(this.productPay);
+          this.loaderService.hideLoader();
 
-        await modal.present();
-        modal.onDidDismiss().then((data) => {
+          this.cashservice.saleProduct(this.productPay).subscribe({
+                
+            next: (rest: any) => {
+              
+              this.alertService.success("Venta realizada con éxito");
+              if(this.isCart){
+                console.log("Se limpia el carrito");
+                this.cashservice.clearCart().subscribe(r => {
+                  
+                });
+              }
 
-        });
+              this.back();
+              this.lottieService.hideLoader();
+            },
+            error: (err)  => {
+              this.alertService.error(err.error.error);
+              this.lottieService.hideLoader();
+            }
+
+          });
+
+        } catch (error) {
+          this.alertService.error("Hubo un error al obtener la autenticación", "La huella dactilar o FaceID no coincidieron correctamente, intente nuevamente.");
+          this.lottieService.hideLoader();
+        }
 
       }else{
         
@@ -469,35 +486,48 @@ export class DetalleCompraComponent  implements OnInit {
             });
 
           } 
-          this.productPay = {
-          "metodo_pago": this.methodPay,
-          "origin": "productos",
-          "user_id": this.userData.id,
-          "productos": productsL,
-          "cliente": {
-            "nombre": this.userData.name,
-            "correo": this.userData.email,
-            "telefono": this.userData.telefono,
-          },
-          "device_session_id": this.deviceDataId,
-          "subtotal": this.subtotalStr,
-          "comision": this.cargoBancario,
-          "total": this.totalCobrarStr,
-        }
-        
-        this.cashservice.saleProduct(this.productPay).subscribe({
-              
-          next: (rest: any) => {
-            
-            this.alertService.success("Compra realiza con éxito");
-            this.lottieService.hideLoader();
-          },
-          error: (err)  => {
-            this.alertService.error(err.error.error);
-            this.lottieService.hideLoader();
-          }
 
-        });
+          this.productPay = {
+            "metodo_pago": this.methodPay,
+            "origin": "productos",
+            "user_id": this.userData.id,
+            "productos": productsL,
+            "cliente": {
+              "nombre": this.userData.name,
+              "correo": this.userData.email,
+              "telefono": this.userData.telefono,
+            },
+            "subtotal": this.subtotalStr,
+            "comision": this.cargoBancario,
+            "total": this.totalCobrarStr,
+            "vendedor": {
+              id: this.vendedorData.id,
+              name: this.vendedorData.name,
+              email: this.vendedorData.email
+            },
+          }
+        
+          this.cashservice.saleProduct(this.productPay).subscribe({
+                
+            next: (rest: any) => {
+              
+              this.alertService.success("Venta realizada con éxito");
+              if(this.isCart){
+                console.log("Se limpia el carrito");
+                this.cashservice.clearCart().subscribe(r => {
+                  
+                });
+              }
+
+              this.back();
+              this.lottieService.hideLoader();
+            },
+            error: (err)  => {
+              this.alertService.error(err.error.error);
+              this.lottieService.hideLoader();
+            }
+
+          });
 
         } catch (error) {
           this.alertService.error("Hubo un error al obtener la autenticación", "La huella dactilar o FaceID no coincidieron correctamente, intente nuevamente.");
@@ -601,5 +631,43 @@ export class DetalleCompraComponent  implements OnInit {
   changeOpt(){
     this.isSearchEmail = false;
     this.searchEmail = "";
+
+    this.isEfectiveOrTerminal = this.methodPay != 'monedero';
+
+    if(this.methodPay != 'monedero'){
+      this.isEfectiveOrTerminal = true;
+      this.isQRconfirm = true;
+    }
+
+    this.userData = [
+    {
+      abonado: false,
+      calle: "",
+      city: "Mérida",
+      country: "Mexico",
+      country_id: null,
+      colonia: "",
+      cp: "",
+      email: "",
+      fechaNacimiento: "",
+      id: 0,
+      invitado: 0,
+      mifel: false,
+      monedero: "",
+      name: "",
+      numero: "",
+      saldo_monedero: null,  
+      state: "Yucatán",
+      state_id: null,
+      telefono: "",
+
+      isValidNameTitular: '',
+      isValidTelefonoTitular: '',
+      isValidEmailTitular: '',
+      isValidConfirmarEmail: '',
+      isValidTarjeta: '',
+      isValidFV: '',
+      isValidCVV: ''
+    }];
   }
 }

@@ -5,6 +5,7 @@ import { IonicModule, IonModal, NavController, ToastController } from '@ionic/an
 import { SharedModule } from 'src/app/shared.module';
 import { CashlessService } from 'src/services/cashless.service';
 import { LottieService } from 'src/services/lottie.service';
+import { UserService } from 'src/services/user.service';
 declare var OpenPay: any;
 @Component({
   selector: 'app-carrito',
@@ -36,7 +37,8 @@ export class CarritoComponent implements OnInit {
   private navCtrl: NavController,
   private cashlessService: CashlessService,
   private loaderService: LottieService, 
-  private toastCtrl: ToastController
+  private toastCtrl: ToastController,
+  public userService: UserService
   ) { }
 
   ngOnInit(): void {
@@ -108,9 +110,16 @@ export class CarritoComponent implements OnInit {
     this.cashlessService.addToCart(product).subscribe(r => {
       this.cartList[this.cartIndex].cantidad = opc;
       this.loaderService.hideLoader();
+      this.calculateTotal();
+
+      this.cashlessService.getCartCount().subscribe((response: any) =>{
+          
+        this.userService.cartCount = response.cart_count
+        localStorage.setItem('cart', response.cart_count);
+      });
     });
 
-    this.calculateTotal();
+    
   }
 
   removeCart(cart: any){
@@ -149,7 +158,7 @@ export class CarritoComponent implements OnInit {
     });    
 
     this.navCtrl.navigateForward(['home/detalleCompra'], {
-      queryParams: { products: JSON.stringify(products) },
+      queryParams: { products: JSON.stringify(products), isCart: true },
       state: { from: '/' }
     });
   }

@@ -244,7 +244,7 @@ export class DetalleProductoComponent  implements OnInit {
 
 
     this.navCtrl.navigateForward(['home/detalleCompra'], {
-      queryParams: { products: JSON.stringify(products) },
+      queryParams: { products: JSON.stringify(products), isCart: false },
       state: { from: '/' }
     });
   }

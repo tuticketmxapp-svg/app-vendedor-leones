@@ -5,6 +5,7 @@ import { LottieService } from 'src/services/lottie.service';
 import { Router } from '@angular/router';
 import { IonModal, MenuController, NavController } from '@ionic/angular';
 import { UserService } from 'src/services/user.service';
+import { LocalStorageService } from 'src/services/UserDataService.service';
 
 @Component({
   selector: 'app-home',
@@ -21,7 +22,7 @@ export class HomePage implements OnInit {
   categorySelected = 'none';
   isCategoriesTab = false;
   CategoriesList: any[] = []; 
-  stringScan: string = "";
+  me: any;
 
   ProductList: any[] = [];
 
@@ -31,9 +32,13 @@ export class HomePage implements OnInit {
     private cashlessService: CashlessService, 
     private route: Router, 
     private navCtrl: NavController,
-    public userService: UserService, ) { }
+    public userService: UserService, 
+  private localStorageService: LocalStorageService,) { }
 
   ngOnInit() {
+    const userData: any = this.localStorageService.getItem('user_data')
+    this.me = JSON.parse(userData);
+
     this.getCategoriaConProductos();
   }
 

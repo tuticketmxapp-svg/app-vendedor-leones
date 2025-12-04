@@ -85,7 +85,10 @@ export class LoginWebService {
   }
 
   getMe() {
-    return this.http.get<any>(`${environment.apiV1}client/me`).pipe(
+    let token = localStorage.getItem('access_token');
+    const headers = { 'Authorization': `Bearer ${token}`, 'responseType' :"text" };
+
+    return this.http.get<any>(`${environment.apiV1}vendor/me`, {headers}).pipe(
       map((result) => {
         // por si lo necesitas todavía
         localStorage.setItem('user', JSON.stringify(result.data));

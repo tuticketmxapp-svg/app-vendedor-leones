@@ -5,6 +5,7 @@ import { catchError } from 'rxjs/operators';
 import { ErrorHandlerService } from 'src/services/error-handler.service';
 import { CapacitorBarcodeScanner } from '@capacitor/barcode-scanner';
 
+
 @Injectable({
   providedIn: 'root'
 })
@@ -12,7 +13,7 @@ export class CashlessService {
 
     constructor(
     private http: HttpClient,
-    private errorHandler: ErrorHandlerService
+    private errorHandler: ErrorHandlerService,
   ) { }
 
   getCategoriaConProductos() {
@@ -53,6 +54,12 @@ export class CashlessService {
     return this.http.get(`${environment.apiV1}vendor/cart`, {headers});
   }
 
+  clearCart(){
+    let token = localStorage.getItem('access_token');
+    const headers = { 'Authorization': `Bearer ${token}`, 'responseType' :"text" };
+    return this.http.delete(`${environment.apiV1}vendor/cart/clear`, {headers});
+  }
+
   async scan(val?: number){
     try {
       const result = await CapacitorBarcodeScanner.scanBarcode({
@@ -67,6 +74,6 @@ export class CashlessService {
   }
 
   getClientesByEmail(data: any) {
-      return this.http.get<any>(`${environment.apiV1}clientes/buscar-email?q=${data}`).pipe(catchError(error => this.errorHandler.handleError(error)));
+    return this.http.get<any>(`${environment.apiV1}clientes/buscar-email?q=${data}`).pipe(catchError(error => this.errorHandler.handleError(error)));
   }
 }
