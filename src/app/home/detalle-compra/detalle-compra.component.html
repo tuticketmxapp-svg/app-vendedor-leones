@@ -88,15 +88,13 @@
     <div>
       <label class="label-custom">Seleccione su tipo de pago</label>
       <ion-radio-group [(ngModel)]="methodPay">
-
-        <!--
+        
         <div class="radio-custom" [ngClass]="methodPay == 'efectivo' ? 'selected' : ''" (click)="changeOpt()">
 
           <ion-radio value="efectivo" labelPlacement="end">Efectivo</ion-radio>
           <img src="assets/img/efectivo.png" alt="">
 
         </div>
-      -->
 
         <div class="radio-custom" [ngClass]="methodPay == 'monedero' ? 'selected' : ''" (click)="changeOpt()">
 

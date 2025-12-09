@@ -247,8 +247,8 @@ export class DetalleCompraComponent  implements OnInit {
       
       console.log(response);
 
-      if(response.length === 1){
-        const re = response[0];
+      if(response?.id){
+        const re = response;
         this.searchEmail = re?.email;
 
         this.userData.id = re.id;
@@ -260,12 +260,28 @@ export class DetalleCompraComponent  implements OnInit {
         this.isValidSearchEmail = true;
 
       }else{
-        this.isSearchEmail = false;
-        this.isQRconfirm = false;
-        this.alertService.error("El cliente no existe", "El cliente no se encuentra disponible o no existe, intente nuevamente.");
+        if(response.length === 1){
+          const re = response[0];
+          this.searchEmail = re?.email;
+
+          this.userData.id = re.id;
+          this.userData.name = re.name;
+          this.userData.email = re.email;
+          this.userData.telefono = re.telefono;
+
+          this.isSearchEmail = true;
+          this.isValidSearchEmail = true;
+
+        }else{
+          this.isSearchEmail = false;
+          this.isQRconfirm = false;
+          this.alertService.error("El cliente no existe", "El cliente no se encuentra disponible o no existe, intente nuevamente.");
+        }
+
       }
 
       this.lottieService.hideLoader();
+
     });
   }
 

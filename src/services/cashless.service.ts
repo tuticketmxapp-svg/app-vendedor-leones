@@ -27,7 +27,7 @@ export class CashlessService {
   }
   
   saleProduct(data: any){
-    return this.http.post(`${environment.apiV1}venta_cash/crear_venta`, data);
+    return this.http.post(`${environment.apiV1}taquilla/ventas`, data);
   }
 
   addToCart(data: any){
