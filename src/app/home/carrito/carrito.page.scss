@@ -309,3 +309,21 @@ ion-item-options{
 .cart-list{
     padding: 0;
 }
+
+.no-products{
+    block-size: 55vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    p{
+        margin: 0;
+        font-size: 18px;
+        color: #757575;
+    }
+
+    img{
+        inline-size: 165px;
+    }
+}

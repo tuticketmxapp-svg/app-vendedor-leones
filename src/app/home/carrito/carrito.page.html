@@ -67,6 +67,11 @@
 
         </ion-list>
 
+        <div *ngIf="cartList.length < 1" class="no-products">
+          <img src="assets/img/NotFound2.svg" alt="">
+          <p>No hay productos agregados.</p>
+        </div>
+
         <ion-modal #cantModal trigger="open-cant" [initialBreakpoint]="0.4" [breakpoints]="[0, 0.4]" cssClass="modal-custom">
     
           <ng-template>
@@ -206,7 +211,7 @@
 
         </ion-grid>
 
-        <ion-button class="pay-button" (click)="salesProduct()"> Continuar con la compra </ion-button>
+        <ion-button class="pay-button" (click)="salesProduct()"> Continuar con la venta </ion-button>
 
       </ion-list>
 
