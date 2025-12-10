@@ -127,6 +127,12 @@ export class DetalleProductoComponent  implements OnInit {
       this.prevProductCount = quantity;
 
       this.cartModal.present();
+
+      this.cashlessService.getCartCount().subscribe((response: any) =>{
+          
+        this.userService.cartCount = response.cart_count
+        localStorage.setItem('cart', response.cart_count);
+      });
     });
     
   }

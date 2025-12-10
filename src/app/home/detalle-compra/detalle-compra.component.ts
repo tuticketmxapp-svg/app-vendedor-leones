@@ -120,7 +120,7 @@ export class DetalleCompraComponent  implements OnInit {
             12: 0, //13.8% de comisión para transacciones de 12 meses
         }
     },
-    "openpay": {
+    "terminal": {
         cbase: 0.029,
         cimporte: 2.5,
         cmeses: {
@@ -128,6 +128,16 @@ export class DetalleCompraComponent  implements OnInit {
             6: 0.078, // 78% de comisión para transacciones de 6 meses
             9: 0.0108, // 108% de comisión para transacciones de 9 meses
             12: 0.0138, //13.8% de comisión para transacciones de 12 meses
+        }
+    },
+    "efectivo": {
+        cbase: 0.020,
+        cimporte: 2.0,
+        cmeses: {
+          3: 0, // 4.8% de comisión para transacciones de 3 meses
+          6: 0, // 78% de comisión para transacciones de 6 meses
+          9: 0, // 108% de comisión para transacciones de 9 meses
+          12: 0, //13.8% de comisión para transacciones de 12 meses
         }
     },
   };
@@ -338,7 +348,7 @@ export class DetalleCompraComponent  implements OnInit {
     });
   }
 
-  toggleSelection() {
+  comision() {
 
     let result = this.addComisionConIVA(this.methodPay as keyof typeof this.metodoPago, 1, this.subtotal || 0);
 
@@ -535,8 +545,15 @@ export class DetalleCompraComponent  implements OnInit {
                 });
               }
 
+              this.cashservice.getCartCount().subscribe((response: any) =>{
+          
+                this.userService.cartCount = response.cart_count
+                localStorage.setItem('cart', response.cart_count);
+              });
+
               this.back();
               this.lottieService.hideLoader();
+
             },
             error: (err)  => {
               this.alertService.error(err.error.error);
@@ -685,5 +702,7 @@ export class DetalleCompraComponent  implements OnInit {
       isValidFV: '',
       isValidCVV: ''
     }];
+
+    this.comision();
   }
 }

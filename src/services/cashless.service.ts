@@ -26,8 +26,11 @@ export class CashlessService {
     return this.http.get<any>(`${environment.apiV1}stock_products/getProducts${params}`).pipe(catchError(error => this.errorHandler.handleError(error)));
   }
   
-  saleProduct(data: any){
-    return this.http.post(`${environment.apiV1}taquilla/ventas`, data);
+  saleProduct(data: any) {
+    let token = localStorage.getItem('access_token');
+    const headers = { 'Authorization': `Bearer ${token}`, 'responseType' :"text" };
+
+    return this.http.post<any>(`${environment.apiV1}vendor/taquilla/ventas`, data, { headers }).pipe(catchError(error => this.errorHandler.handleError(error)));
   }
 
   addToCart(data: any){

@@ -71,18 +71,18 @@ export class MenuComponent implements OnInit, OnDestroy {
         const user = response.data;
         this.me = user;
 
-        this.cashService.getCartCount().subscribe((response: any) =>{
-          
-          this.userService.cartCount = response.cart_count
-          localStorage.setItem('cart', response.cart_count);
-        });
-
         console.log('this.me', this.me);
 
 
       });
       this.userDataService.userSubject$.subscribe((user) => {
         this.me = user;
+      });
+
+      this.cashService.getCartCount().subscribe((response: any) =>{
+          
+        this.userService.cartCount = response.cart_count
+        localStorage.setItem('cart', response.cart_count);
       });
 
     }

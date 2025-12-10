@@ -109,7 +109,7 @@
 
                 <ion-row>
                   <ion-col size="12"><p>Disponible: X unidades</p></ion-col>
-                </ion-row>
+                </ion-row> 
 
                 <ion-row>
                   <ion-col size="12"><ion-input mode="ios" type="number" [(ngModel)]="inputCount"></ion-input></ion-col>
@@ -211,7 +211,7 @@
 
         </ion-grid>
 
-        <ion-button class="pay-button" (click)="salesProduct()"> Continuar con la venta </ion-button>
+        <ion-button class="pay-button" (click)="salesProduct()" [disabled]="cartList.length < 1"> Continuar con la venta </ion-button>
 
       </ion-list>
 

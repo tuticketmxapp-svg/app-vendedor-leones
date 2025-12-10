@@ -126,6 +126,12 @@ export class CarritoComponent implements OnInit {
     this.cashlessService.removeToCart(cart.product_id, cart.atributo).subscribe(r => {
       this.showToast("Se ha eliminado el carrito correctamente");
       this.getCart();
+
+      this.cashlessService.getCartCount().subscribe((response: any) =>{
+          
+        this.userService.cartCount = response.cart_count
+        localStorage.setItem('cart', response.cart_count);
+      });
     });
   }
 

@@ -87,30 +87,29 @@
     <!-- Selección de tipo de pago -->
     <div>
       <label class="label-custom">Seleccione su tipo de pago</label>
-      <ion-radio-group [(ngModel)]="methodPay">
-        
-        <div class="radio-custom" [ngClass]="methodPay == 'efectivo' ? 'selected' : ''" (click)="changeOpt()">
+      
+      <ion-radio-group [(ngModel)]="methodPay" (ionChange)="changeOpt();">
 
-          <ion-radio value="efectivo" labelPlacement="end">Efectivo</ion-radio>
-          <img src="assets/img/efectivo.png" alt="">
-
-        </div>
-
-        <div class="radio-custom" [ngClass]="methodPay == 'monedero' ? 'selected' : ''" (click)="changeOpt()">
+        <div class="radio-custom" [ngClass]="methodPay == 'monedero' ? 'selected' : ''">
 
           <ion-radio value="monedero" labelPlacement="end">Monedero del cliente</ion-radio>
           <img src="assets/img/card.jpeg" alt="">
 
         </div>
 
-        <!--
-        <div class="radio-custom" [ngClass]="methodPay == 'terminal' ? 'selected' : ''" (click)="changeOpt()">
+        <div class="radio-custom" [ngClass]="methodPay == 'efectivo' ? 'selected' : ''">
+
+          <ion-radio value="efectivo" labelPlacement="end">Efectivo</ion-radio>
+          <img src="assets/img/efectivo.png" alt="">
+
+        </div>
+
+        <div class="radio-custom" [ngClass]="methodPay == 'terminal' ? 'selected' : ''">
 
           <ion-radio value="terminal" labelPlacement="end">Terminal bancaria</ion-radio>
           <img src="assets/img/terminalBancaria.png" alt="">
 
         </div>
-      -->
       
       </ion-radio-group>
 
@@ -386,7 +385,7 @@
                           <div><img [src]="methodPay == 'monedero' ? 'assets/img/card.jpeg' : methodPay == 'efectivo' ? 'assets/img/efectivo.png' : 'assets/img/terminalBancaria.png' " alt=""></div>
                           <div class="desc">
                             <p>{{ methodPay == 'monedero' ? 'Pago con monedero de ' + userData.name : methodPay == 'efectivo' ? 'Pago en efectivo' : 'Pago con terminal bancario' }}</p>
-                            <p [ngClass]="!isQRconfirm ? 'bCRed' : ''">Escanea primero su código QR</p>
+                            <p [ngClass]="!isQRconfirm ? 'bCRed' : ''"> {{ methodPay != 'monedero' ? 'Asegúrate que el monto sea el correcto' : 'Escanea primero su código QR' }} </p>
                           </div>
                         </div>
 
